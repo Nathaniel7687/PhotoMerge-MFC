@@ -33,4 +33,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
+	afx_msg void OnBnClickedWindowCheck1();
+	BOOL mWinBtn;
 };

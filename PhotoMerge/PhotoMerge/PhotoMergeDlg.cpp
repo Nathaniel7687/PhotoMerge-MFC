@@ -51,6 +51,7 @@ END_MESSAGE_MAP()
 
 CPhotoMergeDlg::CPhotoMergeDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PHOTOMERGE_DIALOG, pParent)
+	, mWinBtn(TRUE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -58,6 +59,7 @@ CPhotoMergeDlg::CPhotoMergeDlg(CWnd* pParent /*=NULL*/)
 void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_WINDOW_CHECK1, mWinBtn);
 }
 
 BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
@@ -65,6 +67,7 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DROPFILES()
+	ON_BN_CLICKED(IDC_WINDOW_CHECK1, &CPhotoMergeDlg::OnBnClickedWindowCheck1)
 END_MESSAGE_MAP()
 
 
@@ -175,4 +178,20 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 	::DragFinish(hDropInfo);
 
 	CDialogEx::OnDropFiles(hDropInfo);
+}
+
+void CPhotoMergeDlg::OnBnClickedWindowCheck1()
+{
+	if (mWinBtn == true)
+	{
+		//AfxMessageBox(_T("UnChecked"));
+		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+		mWinBtn = false;
+	}
+	else if (mWinBtn == false)
+	{
+		//AfxMessageBox(_T("Checked"));
+		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		mWinBtn = true;
+	}
 }
