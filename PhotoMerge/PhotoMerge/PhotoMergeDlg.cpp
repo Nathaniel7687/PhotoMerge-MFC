@@ -170,7 +170,7 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 		DragQueryFile(hDropInfo, i, strFilePath.GetBuffer(nBuffer + 1), nBuffer + 1);
 		strFilesPath[i] = strFilePath;
 		strFilePath.ReleaseBuffer();
-		//AfxMessageBox(strFilesPath[i]);
+		AfxMessageBox(strFilesPath[i]);
 	}
 	::DragFinish(hDropInfo);
 
