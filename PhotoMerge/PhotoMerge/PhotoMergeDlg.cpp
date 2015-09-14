@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 
@@ -152,3 +153,26 @@ HCURSOR CPhotoMergeDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
+{
+	CString strFilePath;
+	CString strFilesPath[64];
+	DWORD nBuffer = 0;
+
+	// 드롭된 파일의 갯수
+	int nFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+	
+	for (int i = 0; i < nFiles; i++)
+	{
+		nBuffer = DragQueryFile(hDropInfo, i, NULL, 0);
+
+		// 파일의 경로 얻어옴
+		DragQueryFile(hDropInfo, i, strFilePath.GetBuffer(nBuffer + 1), nBuffer + 1);
+		strFilesPath[i] = strFilePath;
+		strFilePath.ReleaseBuffer();
+		//AfxMessageBox(strFilesPath[i]);
+	}
+	::DragFinish(hDropInfo);
+
+	CDialogEx::OnDropFiles(hDropInfo);
+}
