@@ -66,18 +66,26 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_WINDOW_CHECK1, mWinBtn);
 	DDX_Text(pDX, IDC_SAVE_EDIT1, mSaveFileName);
 	DDV_MaxChars(pDX, mSaveFileName, 20);
+
+	DDX_Control(pDX, IDC_SIZE_EDIT1, mSizeEditCtrlX);
 	DDX_Text(pDX, IDC_SIZE_EDIT1, mSizeEditX);
 	DDV_MaxChars(pDX, mSizeEditX, 4);
+	DDX_Control(pDX, IDC_SIZE_EDIT2, mSizeEditCtrlY);
 	DDX_Text(pDX, IDC_SIZE_EDIT2, mSizeEditY);
 	DDV_MaxChars(pDX, mSizeEditY, 4);
+
+	DDX_Control(pDX, IDC_SIZE_EDIT3, mSizeEditNumCtrlX);
 	DDX_Text(pDX, IDC_SIZE_EDIT3, mSizeEditNumX);
 	DDV_MaxChars(pDX, mSizeEditNumX, 2);
+	DDX_Control(pDX, IDC_SIZE_EDIT4, mSizeEditNumCtrlY);
 	DDX_Text(pDX, IDC_SIZE_EDIT4, mSizeEditNumY);
 	DDV_MaxChars(pDX, mSizeEditNumY, 2);
+
 	DDX_Control(pDX, IDC_SIZE_COMBO1, mSizeComboCtrl);
 	DDX_CBString(pDX, IDC_SIZE_COMBO1, mSizeComboVal);
 	DDX_Control(pDX, IDC_WINDOW_TRNS_SLIDE, mWinTrnsSlideCtrl);
 	DDX_Radio(pDX, IDC_SAVE_RADIO1, mSaveFolder);
+	DDX_Control(pDX, IDC_PHOTO_CNT, mPhotoCntStaticCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
@@ -200,9 +208,15 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 	CString strFilesPath[64];
 	DWORD nBuffer = 0;
 
-	// 드롭된 파일의 갯수
+	CString strFilesCnt;
+
+	// 드래그 드롭된 파일의 갯수
 	int nFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
-	
+
+	// 드래그 드롭된 파일의 갯수 Static Text에 표시
+	strFilesCnt.Format(_T("%d"), nFiles);
+	mPhotoCntStaticCtrl.SetWindowTextW(strFilesCnt);
+
 	for (int i = 0; i < nFiles; i++)
 	{
 		nBuffer = DragQueryFile(hDropInfo, i, NULL, 0);

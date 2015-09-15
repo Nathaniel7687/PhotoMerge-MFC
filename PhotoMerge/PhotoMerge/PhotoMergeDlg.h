@@ -40,18 +40,27 @@ public:
 	BOOL mWinBtn;
 	CString mSaveFileName;
 
+	// 합성 사이즈 에디트 컨트롤러 멤버변수
 	CString mSizeEditX;
 	CString mSizeEditY;
+	CEdit mSizeEditCtrlX;
+	CEdit mSizeEditCtrlY;
+
+	// 합성 배열 에디트 컨트롤러 멤버변수
+	CString mSizeEditNumX;
+	CString mSizeEditNumY;
+	CEdit mSizeEditNumCtrlX;
+	CEdit mSizeEditNumCtrlY;
+
 	afx_msg void OnCbnSelchangeSizeCombo1();
 	CComboBox mSizeComboCtrl;
 	CString mSizeComboVal;
 
 	CSliderCtrl mWinTrnsSlideCtrl;
 	LONG ExtendedStyle;
+	CStatic mPhotoCntStaticCtrl;	// 드래그 드롭한 파일 갯수 표시
 	afx_msg void OnNMCustomdrawWindowTrnsSlide(NMHDR *pNMHDR, LRESULT *pResult);
 
 	// 저장폴더 라디오 버튼 변수
 	int mSaveFolder;
-	CString mSizeEditNumX;
-	CString mSizeEditNumY;
 };
