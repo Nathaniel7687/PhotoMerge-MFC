@@ -33,6 +33,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
 public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnBnClickedWindowCheck1();
@@ -48,4 +49,9 @@ public:
 	CSliderCtrl mWinTrnsSlideCtrl;
 	LONG ExtendedStyle;
 	afx_msg void OnNMCustomdrawWindowTrnsSlide(NMHDR *pNMHDR, LRESULT *pResult);
+
+	// 저장폴더 라디오 버튼 변수
+	int mSaveFolder;
+	CString mSizeEditNumX;
+	CString mSizeEditNumY;
 };

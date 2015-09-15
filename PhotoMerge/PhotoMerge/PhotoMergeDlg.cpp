@@ -46,16 +46,16 @@ END_MESSAGE_MAP()
 
 
 // CPhotoMergeDlg 대화 상자
-
-
-
 CPhotoMergeDlg::CPhotoMergeDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PHOTOMERGE_DIALOG, pParent)
 	, mWinBtn(TRUE)
 	, mSaveFileName(_T("Output"))
 	, mSizeEditX(_T("640"))
 	, mSizeEditY(_T("480"))
+	, mSizeEditNumX(_T(""))
+	, mSizeEditNumY(_T(""))
 	, mSizeComboVal(_T(""))
+	, mSaveFolder(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -70,9 +70,14 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MaxChars(pDX, mSizeEditX, 4);
 	DDX_Text(pDX, IDC_SIZE_EDIT2, mSizeEditY);
 	DDV_MaxChars(pDX, mSizeEditY, 4);
+	DDX_Text(pDX, IDC_SIZE_EDIT3, mSizeEditNumX);
+	DDV_MaxChars(pDX, mSizeEditNumX, 2);
+	DDX_Text(pDX, IDC_SIZE_EDIT4, mSizeEditNumY);
+	DDV_MaxChars(pDX, mSizeEditNumY, 2);
 	DDX_Control(pDX, IDC_SIZE_COMBO1, mSizeComboCtrl);
 	DDX_CBString(pDX, IDC_SIZE_COMBO1, mSizeComboVal);
 	DDX_Control(pDX, IDC_WINDOW_TRNS_SLIDE, mWinTrnsSlideCtrl);
+	DDX_Radio(pDX, IDC_SAVE_RADIO1, mSaveFolder);
 }
 
 BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
@@ -229,15 +234,14 @@ void CPhotoMergeDlg::OnBnClickedWindowCheck1()
 	}
 }
 
-
+// 사이즈 선택 함수
 void CPhotoMergeDlg::OnCbnSelchangeSizeCombo1()
 {
 	// TODO: Add your control notification handler code here
 
 }
 
-
-
+// 투명도 슬라이더 조절 함수
 void CPhotoMergeDlg::OnNMCustomdrawWindowTrnsSlide(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
