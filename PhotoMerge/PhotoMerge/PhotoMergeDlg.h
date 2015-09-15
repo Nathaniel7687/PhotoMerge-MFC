@@ -3,6 +3,8 @@
 //
 
 #pragma once
+#include "afxwin.h"
+#include "afxcmn.h"
 
 
 // CPhotoMergeDlg 대화 상자
@@ -35,4 +37,15 @@ public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnBnClickedWindowCheck1();
 	BOOL mWinBtn;
+	CString mSaveFileName;
+
+	CString mSizeEditX;
+	CString mSizeEditY;
+	afx_msg void OnCbnSelchangeSizeCombo1();
+	CComboBox mSizeComboCtrl;
+	CString mSizeComboVal;
+
+	CSliderCtrl mWinTrnsSlideCtrl;
+	LONG ExtendedStyle;
+	afx_msg void OnNMCustomdrawWindowTrnsSlide(NMHDR *pNMHDR, LRESULT *pResult);
 };

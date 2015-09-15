@@ -52,6 +52,10 @@ END_MESSAGE_MAP()
 CPhotoMergeDlg::CPhotoMergeDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PHOTOMERGE_DIALOG, pParent)
 	, mWinBtn(TRUE)
+	, mSaveFileName(_T("Output"))
+	, mSizeEditX(_T("640"))
+	, mSizeEditY(_T("480"))
+	, mSizeComboVal(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -60,6 +64,15 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Check(pDX, IDC_WINDOW_CHECK1, mWinBtn);
+	DDX_Text(pDX, IDC_SAVE_EDIT1, mSaveFileName);
+	DDV_MaxChars(pDX, mSaveFileName, 20);
+	DDX_Text(pDX, IDC_SIZE_EDIT1, mSizeEditX);
+	DDV_MaxChars(pDX, mSizeEditX, 4);
+	DDX_Text(pDX, IDC_SIZE_EDIT2, mSizeEditY);
+	DDV_MaxChars(pDX, mSizeEditY, 4);
+	DDX_Control(pDX, IDC_SIZE_COMBO1, mSizeComboCtrl);
+	DDX_CBString(pDX, IDC_SIZE_COMBO1, mSizeComboVal);
+	DDX_Control(pDX, IDC_WINDOW_TRNS_SLIDE, mWinTrnsSlideCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
@@ -68,6 +81,8 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DROPFILES()
 	ON_BN_CLICKED(IDC_WINDOW_CHECK1, &CPhotoMergeDlg::OnBnClickedWindowCheck1)
+	ON_CBN_SELCHANGE(IDC_SIZE_COMBO1, &CPhotoMergeDlg::OnCbnSelchangeSizeCombo1)
+	ON_NOTIFY(NM_CUSTOMDRAW, IDC_WINDOW_TRNS_SLIDE, &CPhotoMergeDlg::OnNMCustomdrawWindowTrnsSlide)
 END_MESSAGE_MAP()
 
 
@@ -103,7 +118,26 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	// 크기 조절에 콤보 박스 셋팅
+	mSizeComboCtrl.AddString(_T("사용자 지정"));
+	mSizeComboCtrl.AddString(_T("640 x 480(4:3)"));
 
+	if (mWinBtn)
+	{
+		//AfxMessageBox(_T("Checked"));
+		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+	
+	// 다이얼로그 투명화를 위한 초기 셋팅
+	ExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
+	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, ExtendedStyle | WS_EX_LAYERED);
+	
+	// 투명도 슬라이더 셋팅
+	mWinTrnsSlideCtrl.SetRange(80, 255);	// 투명도 슬라이더 범위
+	mWinTrnsSlideCtrl.SetPos(255);
+	mWinTrnsSlideCtrl.SetLineSize(2);
+	::SetLayeredWindowAttributes(GetSafeHwnd(), 0, mWinTrnsSlideCtrl.GetPos(), LWA_ALPHA);
+	
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -123,7 +157,6 @@ void CPhotoMergeDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // 대화 상자에 최소화 단추를 추가할 경우 아이콘을 그리려면
 //  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 응용 프로그램의 경우에는
 //  프레임워크에서 이 작업을 자동으로 수행합니다.
-
 void CPhotoMergeDlg::OnPaint()
 {
 	if (IsIconic())
@@ -182,7 +215,7 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 
 void CPhotoMergeDlg::OnBnClickedWindowCheck1()
 {
-	if (mWinBtn == true)
+	if (mWinBtn)
 	{
 		//AfxMessageBox(_T("UnChecked"));
 		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
@@ -194,4 +227,22 @@ void CPhotoMergeDlg::OnBnClickedWindowCheck1()
 		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 		mWinBtn = true;
 	}
+}
+
+
+void CPhotoMergeDlg::OnCbnSelchangeSizeCombo1()
+{
+	// TODO: Add your control notification handler code here
+
+}
+
+
+
+void CPhotoMergeDlg::OnNMCustomdrawWindowTrnsSlide(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	::SetLayeredWindowAttributes(GetSafeHwnd(), 0, mWinTrnsSlideCtrl.GetPos(), LWA_ALPHA);
+
+	*pResult = 0;
 }
