@@ -34,20 +34,22 @@ public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 
 	// 합성 사이즈 관련
-	CString mergeSizeX;
-	CString mergeSizeY;
-	CEdit mergeSizeCtrlX;
-	CEdit mergeSizeCtrlY;
+	CString	mergeSizeX;
+	CString	mergeSizeY;
+	CEdit	mergeSizeCtrlX;
+	CEdit	mergeSizeCtrlY;
 
 	// 합성 사이즈 콤보박스 관련
 	CComboBox mergeSizeComboCtrl;
 	afx_msg void OnSelectMergeSizeCombo();
 
 	// 합성 배열 관련
-	CString arrangemNumX;
-	CString arrangemNumY;
-	CEdit arrangemNumCtrlX;
-	CEdit arrangemNumCtrlY;
+	CString	arrangemNumX;
+	CString	arrangemNumY;
+	CString	arrangemSpace;
+	CEdit	arrangemNumCtrlX;
+	CEdit	arrangemNumCtrlY;
+	CEdit	arrangemSpaceCtrl;
 
 	// 항상 위 관련
 	BOOL windowTopMost;
@@ -68,4 +70,5 @@ public:
 	afx_msg void OnSelectSaveDifFolder();
 	afx_msg void OnOpenSaveDefFolder();
 	afx_msg void OnOpenSaveDifFolder();
+	afx_msg void OnMergePhotos();
 };

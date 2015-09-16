@@ -1,6 +1,3 @@
-// PhotoMergeDlg.cpp : 구현 파일
-//
-
 #include "stdafx.h"
 #include "PhotoMerge.h"
 #include "PhotoMergeDlg.h"
@@ -48,12 +45,13 @@ END_MESSAGE_MAP()
 // CPhotoMergeDlg 대화 상자
 CPhotoMergeDlg::CPhotoMergeDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PHOTOMERGE_DIALOG, pParent)
-	, windowTopMost(TRUE)
-	, saveFileName(_T("Output"))
 	, mergeSizeX(_T("640"))
 	, mergeSizeY(_T("480"))
 	, arrangemNumX(_T(""))
 	, arrangemNumY(_T(""))
+	, arrangemSpace(_T("15"))
+	, saveFileName(_T("Output"))
+	, windowTopMost(TRUE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -78,6 +76,9 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SIZE_EDIT4, arrangemNumY);
 	DDV_MaxChars(pDX, arrangemNumY, 2);
 
+	DDX_Control(pDX, IDC_EDIT1, arrangemSpaceCtrl);
+	DDX_Text(pDX, IDC_EDIT1, arrangemSpace);
+	DDV_MaxChars(pDX, arrangemSpace, 4);
 
 	DDX_Check(pDX, IDC_WINDOW_CHECK1, windowTopMost);
 	DDX_Text(pDX, IDC_SAVE_EDIT1, saveFileName);
@@ -100,6 +101,7 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SAVE_SET_BUTTON2, &CPhotoMergeDlg::OnSelectSaveDifFolder)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON1, &CPhotoMergeDlg::OnOpenSaveDefFolder)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON2, &CPhotoMergeDlg::OnOpenSaveDifFolder)
+	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
 END_MESSAGE_MAP()
 
 
@@ -137,6 +139,7 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	// 크기 조절에 콤보 박스 셋팅
 	mergeSizeComboCtrl.AddString(_T("사용자 지정"));
 	mergeSizeComboCtrl.AddString(_T("640 x 480(4:3)"));
+	mergeSizeComboCtrl.SetCurSel(1);
 	
 	// 항상 위 체크
 	if (windowTopMost)
@@ -166,7 +169,7 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	saveDifFolder += _T("\\");
 	saveDifFolderCtrl.SetWindowTextW(saveDifFolder);
 	//AfxMessageBox(saveDifFolder);
-
+	
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -286,7 +289,11 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 // 사이즈 선택 함수
 void CPhotoMergeDlg::OnSelectMergeSizeCombo()
 {
-
+	if (mergeSizeComboCtrl.GetCurSel() == 1)
+	{
+		mergeSizeCtrlX.SetWindowTextW(_T("640"));
+		mergeSizeCtrlY.SetWindowTextW(_T("480"));
+	}
 }
 
 
@@ -360,4 +367,13 @@ void CPhotoMergeDlg::OnSelectSaveDifFolder()
 		saveDifFolder += _T("\\");
 		saveDifFolderCtrl.SetWindowTextW(saveDifFolder);
 	}
+}
+
+
+void CPhotoMergeDlg::OnMergePhotos()
+{
+	// TODO: Add your control notification handler code here
+
+
+	CDialogEx::OnOK();
 }
