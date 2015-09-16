@@ -2,6 +2,12 @@
 #include "afxwin.h"
 #include "afxcmn.h"
 
+// CImage를 사용하기 위한 헤더
+#include <atlimage.h>
+
+// GDI+를 이용하기 위한 라이브러리
+#include <gdiplus.h>
+using namespace Gdiplus;
 
 class CPhotoMergeDlg : public CDialogEx
 {
@@ -27,10 +33,14 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
+	void checkIntToCString(int);
+
 
 public:
 	// 드래그 & 드롭 관련
+	int dropFilesNum;
 	CStatic dropFilesNumCtrl;
+	CString dropFilesPath[100];
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 
 	// 합성 사이즈 관련
@@ -70,5 +80,10 @@ public:
 	afx_msg void OnSelectSaveDifFolder();
 	afx_msg void OnOpenSaveDefFolder();
 	afx_msg void OnOpenSaveDifFolder();
+
+	ULONG_PTR			gdiplustToken;
+	GdiplusStartupInput	gdiplusStartupInput;
 	afx_msg void OnMergePhotos();
+
+	void Wait(DWORD);
 };

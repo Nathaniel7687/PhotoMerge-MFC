@@ -102,6 +102,7 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON1, &CPhotoMergeDlg::OnOpenSaveDefFolder)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON2, &CPhotoMergeDlg::OnOpenSaveDifFolder)
 	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
+//	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -169,7 +170,7 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	saveDifFolder += _T("\\");
 	saveDifFolderCtrl.SetWindowTextW(saveDifFolder);
 	//AfxMessageBox(saveDifFolder);
-	
+
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -223,44 +224,51 @@ HCURSOR CPhotoMergeDlg::OnQueryDragIcon()
 }
 
 
+void CPhotoMergeDlg::checkIntToCString(int x)
+{
+	CString temp;
+	temp.Format(_T("%d"), x);
+	AfxMessageBox(temp);
+}
+
+
 void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 {
 	CString strFilePath;
-	CString strFilesPath[64];
 	DWORD nBuffer = 0;
 
 	CString strFilesCnt;
 
 	// 드래그 드롭된 파일의 갯수
-	int nFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
-	if (nFiles == 1)
+	dropFilesNum = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+	if (dropFilesNum == 1)
 	{
 		AfxMessageBox(_T("2개 이상의 사진이 필요합니다."));
 		return;
 	}
 
-	for (int i = 0; i < nFiles; i++)
+	for (int i = 0; i < dropFilesNum; i++)
 	{
 		nBuffer = DragQueryFile(hDropInfo, i, NULL, 0);
 
 		// 파일의 경로 얻어옴
 		DragQueryFile(hDropInfo, i, strFilePath.GetBuffer(nBuffer + 1), nBuffer + 1);
-		strFilesPath[i] = strFilePath;
+		dropFilesPath[i] = strFilePath;
 		strFilePath.ReleaseBuffer();
-		//AfxMessageBox(strFilesPath[i]);
+		//AfxMessageBox(dropFilesPath[i]);
 	}
 	::DragFinish(hDropInfo);
 
 	// 드래그 드롭된 파일의 갯수 Static Text Box에 표시
-	strFilesCnt.Format(_T("%d"), nFiles);
+	strFilesCnt.Format(_T("%d"), dropFilesNum);
 	dropFilesNumCtrl.SetWindowTextW(strFilesCnt);
 
 	// 사진 배열 값 Edit Text Box에 표시
-	if ((nFiles % 2) == 0)
+	if ((dropFilesNum % 2) == 0)
 	{
 		// 세로 사진 배열 갯수를 1/2로 맞춤
 		CString numY;
-		numY.Format(_T("%d"), nFiles / 2);
+		numY.Format(_T("%d"), dropFilesNum / 2);
 
 		arrangemNumCtrlX.SetWindowTextW(_T("2"));
 		arrangemNumCtrlY.SetWindowTextW(numY);
@@ -269,15 +277,15 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 	{
 		// 세로 사진 배열 갯수를 1/2로 맞춤
 		CString numY;
-		numY.Format(_T("%d"), nFiles / 2 + 1);
+		numY.Format(_T("%d"), dropFilesNum / 2 + 1);
 
 		arrangemNumCtrlX.SetWindowTextW(_T("2"));
 		arrangemNumCtrlY.SetWindowTextW(numY);
 	}
 
 	// 저장폴더 셋팅
-	int i = strFilesPath[0].ReverseFind('\\');			// 파일 이름을 지우기 위해서 오른쪽 마지막 '/'를 찾는다.
-	saveDefFolder = strFilesPath[0].Left(i) + _T("\\");	// i칸까지 경로가 확보된다(뒤에 있는 파일 이름이 지워짐)
+	int i = dropFilesPath[0].ReverseFind('\\');			// 파일 이름을 지우기 위해서 오른쪽 마지막 '/'를 찾는다.
+	saveDefFolder = dropFilesPath[0].Left(i) + _T("\\");	// i칸까지 경로가 확보된다(뒤에 있는 파일 이름이 지워짐)
 	//AfxMessageBox(saveDefFolder);
 
 	AfxMessageBox(strFilesCnt + _T("개의 사진을 불러왔습니다."));
@@ -371,9 +379,91 @@ void CPhotoMergeDlg::OnSelectSaveDifFolder()
 
 
 void CPhotoMergeDlg::OnMergePhotos()
+{	
+	if (GdiplusStartup(&gdiplustToken, &gdiplusStartupInput, NULL) == Ok) {
+		CDC *dc = this->GetDC();
+
+		// Editbox에서 정보 가져오기
+		CString tempMergeX, tempMergeY;
+		mergeSizeCtrlX.GetWindowTextW(tempMergeX);
+		mergeSizeCtrlY.GetWindowTextW(tempMergeY);
+		int mergeX = _ttoi(tempMergeX);
+		int mergeY = _ttoi(tempMergeY);
+
+		CString tempArrangemNumX, tempArrangemNumY;
+		arrangemNumCtrlX.GetWindowTextW(tempArrangemNumX);
+		arrangemNumCtrlY.GetWindowTextW(tempArrangemNumY);
+		int arrangemX = _ttoi(tempArrangemNumX);
+		int arrangemY = _ttoi(tempArrangemNumX);
+
+		CString tempArrangemSpace;
+		arrangemSpaceCtrl.GetWindowTextW(tempArrangemSpace);
+		int arrangemSpace = _ttoi(tempArrangemSpace);
+
+		// 배경 그리기
+		Graphics background(*dc);
+		SolidBrush solidBrush(Color(255, 255, 255));
+		background.FillRectangle(&solidBrush, 0, 0, mergeX, mergeY);
+
+		// ArrangemNumY 개수
+		for (int i = 0; i < arrangemY; i++)
+		{
+			Graphics graphics(*dc);
+			CImage image;
+			HRESULT hResult = image.Load(_T("C:\\Users\\natha\\Pictures\\Screenshots\\Screenshot (3).png"));
+
+			if (FAILED(hResult))
+			{
+				AfxMessageBox(_T("사진파일을 인식할 수 없습니다.\n다시 확인해주세요."));
+				return;
+			}
+
+			image.Draw(graphics.GetHDC(),
+				arrangemSpace, arrangemSpace, 100, 100);
+			image.Destroy();
+
+			// ArrangemNumX 개수
+			for (int j = 0; j < arrangemX; j++)
+			{
+				Graphics graphics(*dc);
+				CImage image;
+				HRESULT hResult = image.Load(_T("C:\\Users\\natha\\Pictures\\Screenshots\\Screenshot (3).png"));
+
+				if (FAILED(hResult))
+				{
+					AfxMessageBox(_T("사진파일을 인식할 수 없습니다.\n다시 확인해주세요."));
+					return;
+				}
+
+				image.Draw(graphics.GetHDC(),
+					arrangemSpace, arrangemSpace, 100, 100);
+				image.Destroy();
+			}
+		}
+
+		ReleaseDC(dc);
+	}
+	else
+	{
+		AfxMessageBox(_T("GDI+ 클래스를 초기화 하지 못했습니다.\n제작자에게 문의하세요."));
+		return;
+	}
+
+	GdiplusShutdown(gdiplustToken);
+}
+
+void CPhotoMergeDlg::Wait(DWORD dwMillisecond)
 {
-	// TODO: Add your control notification handler code here
+	MSG msg;
+	DWORD dwStart;
+	dwStart = GetTickCount();
 
-
-	CDialogEx::OnOK();
+	while (GetTickCount() - dwStart < dwMillisecond)
+	{
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
 }
