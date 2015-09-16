@@ -1,4 +1,3 @@
-
 // PhotoMergeDlg.cpp : 구현 파일
 //
 
@@ -13,7 +12,6 @@
 
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
-
 class CAboutDlg : public CDialogEx
 {
 public:
@@ -32,9 +30,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
 {
 }
+
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -48,44 +48,45 @@ END_MESSAGE_MAP()
 // CPhotoMergeDlg 대화 상자
 CPhotoMergeDlg::CPhotoMergeDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PHOTOMERGE_DIALOG, pParent)
-	, mWinBtn(TRUE)
-	, mSaveFileName(_T("Output"))
-	, mSizeEditX(_T("640"))
-	, mSizeEditY(_T("480"))
-	, mSizeEditNumX(_T(""))
-	, mSizeEditNumY(_T(""))
-	, mSizeComboVal(_T(""))
-	, mSaveFolder(0)
+	, windowTopMost(TRUE)
+	, saveFileName(_T("Output"))
+	, mergeSizeX(_T("640"))
+	, mergeSizeY(_T("480"))
+	, arrangemNumX(_T(""))
+	, arrangemNumY(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+
 void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Check(pDX, IDC_WINDOW_CHECK1, mWinBtn);
-	DDX_Text(pDX, IDC_SAVE_EDIT1, mSaveFileName);
-	DDV_MaxChars(pDX, mSaveFileName, 20);
+	DDX_Control(pDX, IDC_PHOTO_CNT, dropFilesNumCtrl);
 
-	DDX_Control(pDX, IDC_SIZE_EDIT1, mSizeEditCtrlX);
-	DDX_Text(pDX, IDC_SIZE_EDIT1, mSizeEditX);
-	DDV_MaxChars(pDX, mSizeEditX, 4);
-	DDX_Control(pDX, IDC_SIZE_EDIT2, mSizeEditCtrlY);
-	DDX_Text(pDX, IDC_SIZE_EDIT2, mSizeEditY);
-	DDV_MaxChars(pDX, mSizeEditY, 4);
+	DDX_Control(pDX, IDC_SIZE_EDIT1, mergeSizeCtrlX);
+	DDX_Text(pDX, IDC_SIZE_EDIT1, mergeSizeX);
+	DDV_MaxChars(pDX, mergeSizeX, 4);
+	DDX_Control(pDX, IDC_SIZE_EDIT2, mergeSizeCtrlY);
+	DDX_Text(pDX, IDC_SIZE_EDIT2, mergeSizeY);
+	DDV_MaxChars(pDX, mergeSizeY, 4);
 
-	DDX_Control(pDX, IDC_SIZE_EDIT3, mSizeEditNumCtrlX);
-	DDX_Text(pDX, IDC_SIZE_EDIT3, mSizeEditNumX);
-	DDV_MaxChars(pDX, mSizeEditNumX, 2);
-	DDX_Control(pDX, IDC_SIZE_EDIT4, mSizeEditNumCtrlY);
-	DDX_Text(pDX, IDC_SIZE_EDIT4, mSizeEditNumY);
-	DDV_MaxChars(pDX, mSizeEditNumY, 2);
+	DDX_Control(pDX, IDC_SIZE_EDIT3, arrangemNumCtrlX);
+	DDX_Text(pDX, IDC_SIZE_EDIT3, arrangemNumX);
+	DDV_MaxChars(pDX, arrangemNumX, 2);
+	DDX_Control(pDX, IDC_SIZE_EDIT4, arrangemNumCtrlY);
+	DDX_Text(pDX, IDC_SIZE_EDIT4, arrangemNumY);
+	DDV_MaxChars(pDX, arrangemNumY, 2);
 
-	DDX_Control(pDX, IDC_SIZE_COMBO1, mSizeComboCtrl);
-	DDX_CBString(pDX, IDC_SIZE_COMBO1, mSizeComboVal);
-	DDX_Control(pDX, IDC_WINDOW_TRNS_SLIDE, mWinTrnsSlideCtrl);
-	DDX_Radio(pDX, IDC_SAVE_RADIO1, mSaveFolder);
-	DDX_Control(pDX, IDC_PHOTO_CNT, mPhotoCntStaticCtrl);
+
+	DDX_Check(pDX, IDC_WINDOW_CHECK1, windowTopMost);
+	DDX_Text(pDX, IDC_SAVE_EDIT1, saveFileName);
+	DDV_MaxChars(pDX, saveFileName, 20);
+	DDX_Control(pDX, IDC_SIZE_COMBO1, mergeSizeComboCtrl);
+	DDX_Control(pDX, IDC_WINDOW_TRNS_SLIDE, transSliderCtrl);
+	DDX_Control(pDX, IDC_SAVE_RADIO1, saveDefFolderRadioCtrl);
+	DDX_Control(pDX, IDC_SAVE_RADIO2, saveDifFolderRadioCtrl);
+	DDX_Control(pDX, IDC_SAVE_EDIT2, saveDifFolderCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
@@ -93,14 +94,16 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DROPFILES()
-	ON_BN_CLICKED(IDC_WINDOW_CHECK1, &CPhotoMergeDlg::OnBnClickedWindowCheck1)
-	ON_CBN_SELCHANGE(IDC_SIZE_COMBO1, &CPhotoMergeDlg::OnCbnSelchangeSizeCombo1)
-	ON_NOTIFY(NM_CUSTOMDRAW, IDC_WINDOW_TRNS_SLIDE, &CPhotoMergeDlg::OnNMCustomdrawWindowTrnsSlide)
+	ON_CBN_SELCHANGE(IDC_SIZE_COMBO1, &CPhotoMergeDlg::OnSelectMergeSizeCombo)
+	ON_BN_CLICKED(IDC_WINDOW_CHECK1, &CPhotoMergeDlg::OnClickWindowTopMostCheck)
+	ON_NOTIFY(NM_CUSTOMDRAW, IDC_WINDOW_TRNS_SLIDE, &CPhotoMergeDlg::OnNMCustomdrawTransSlider)
+	ON_BN_CLICKED(IDC_SAVE_SET_BUTTON2, &CPhotoMergeDlg::OnSelectSaveDifFolder)
+	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON1, &CPhotoMergeDlg::OnOpenSaveDefFolder)
+	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON2, &CPhotoMergeDlg::OnOpenSaveDifFolder)
 END_MESSAGE_MAP()
 
 
 // CPhotoMergeDlg 메시지 처리기
-
 BOOL CPhotoMergeDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -132,27 +135,41 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	// 크기 조절에 콤보 박스 셋팅
-	mSizeComboCtrl.AddString(_T("사용자 지정"));
-	mSizeComboCtrl.AddString(_T("640 x 480(4:3)"));
-
-	if (mWinBtn)
+	mergeSizeComboCtrl.AddString(_T("사용자 지정"));
+	mergeSizeComboCtrl.AddString(_T("640 x 480(4:3)"));
+	
+	// 항상 위 체크
+	if (windowTopMost)
 	{
 		//AfxMessageBox(_T("Checked"));
 		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	}
 	
 	// 다이얼로그 투명화를 위한 초기 셋팅
-	ExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
-	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, ExtendedStyle | WS_EX_LAYERED);
+	transExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
+	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, transExtendedStyle | WS_EX_LAYERED);
 	
 	// 투명도 슬라이더 셋팅
-	mWinTrnsSlideCtrl.SetRange(80, 255);	// 투명도 슬라이더 범위
-	mWinTrnsSlideCtrl.SetPos(255);
-	mWinTrnsSlideCtrl.SetLineSize(2);
-	::SetLayeredWindowAttributes(GetSafeHwnd(), 0, mWinTrnsSlideCtrl.GetPos(), LWA_ALPHA);
+	transSliderCtrl.SetRange(80, 255);	// 투명도 슬라이더 범위
+	transSliderCtrl.SetPos(255);
+	transSliderCtrl.SetLineSize(2);
+	::SetLayeredWindowAttributes(GetSafeHwnd(), 0, transSliderCtrl.GetPos(), LWA_ALPHA);
 	
+	// 저장폴더 Radio버튼 설정
+	saveDefFolderRadioCtrl.SetCheck(BST_CHECKED);
+	saveDifFolderRadioCtrl.SetCheck(BST_UNCHECKED);
+
+	// 다른폴더 저장 초기 경로 셋팅
+	TCHAR desktopPath[MAX_PATH];
+	SHGetSpecialFolderPath(NULL, (LPWSTR)desktopPath, CSIDL_DESKTOP, FALSE);
+	saveDifFolder = desktopPath;
+	saveDifFolder += _T("\\");
+	saveDifFolderCtrl.SetWindowTextW(saveDifFolder);
+	//AfxMessageBox(saveDifFolder);
+
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
+
 
 void CPhotoMergeDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -167,9 +184,9 @@ void CPhotoMergeDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// 대화 상자에 최소화 단추를 추가할 경우 아이콘을 그리려면
-//  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 응용 프로그램의 경우에는
-//  프레임워크에서 이 작업을 자동으로 수행합니다.
+
+// 대화 상자에 최소화 단추를 추가할 경우 아이콘을 그리려면 아래 코드가 필요합니다.
+// 문서/뷰 모델을 사용하는 MFC 응용 프로그램의 경우에는 프레임워크에서 이 작업을 자동으로 수행합니다.
 void CPhotoMergeDlg::OnPaint()
 {
 	if (IsIconic())
@@ -195,12 +212,13 @@ void CPhotoMergeDlg::OnPaint()
 	}
 }
 
-// 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
-//  이 함수를 호출합니다.
+
+// 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서 이 함수를 호출합니다.
 HCURSOR CPhotoMergeDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
+
 
 void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 {
@@ -212,10 +230,11 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 
 	// 드래그 드롭된 파일의 갯수
 	int nFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
-
-	// 드래그 드롭된 파일의 갯수 Static Text에 표시
-	strFilesCnt.Format(_T("%d"), nFiles);
-	mPhotoCntStaticCtrl.SetWindowTextW(strFilesCnt);
+	if (nFiles == 1)
+	{
+		AfxMessageBox(_T("2개 이상의 사진이 필요합니다."));
+		return;
+	}
 
 	for (int i = 0; i < nFiles; i++)
 	{
@@ -225,42 +244,120 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 		DragQueryFile(hDropInfo, i, strFilePath.GetBuffer(nBuffer + 1), nBuffer + 1);
 		strFilesPath[i] = strFilePath;
 		strFilePath.ReleaseBuffer();
-		AfxMessageBox(strFilesPath[i]);
+		//AfxMessageBox(strFilesPath[i]);
 	}
 	::DragFinish(hDropInfo);
+
+	// 드래그 드롭된 파일의 갯수 Static Text Box에 표시
+	strFilesCnt.Format(_T("%d"), nFiles);
+	dropFilesNumCtrl.SetWindowTextW(strFilesCnt);
+
+	// 사진 배열 값 Edit Text Box에 표시
+	if ((nFiles % 2) == 0)
+	{
+		// 세로 사진 배열 갯수를 1/2로 맞춤
+		CString numY;
+		numY.Format(_T("%d"), nFiles / 2);
+
+		arrangemNumCtrlX.SetWindowTextW(_T("2"));
+		arrangemNumCtrlY.SetWindowTextW(numY);
+	}
+	else
+	{
+		// 세로 사진 배열 갯수를 1/2로 맞춤
+		CString numY;
+		numY.Format(_T("%d"), nFiles / 2 + 1);
+
+		arrangemNumCtrlX.SetWindowTextW(_T("2"));
+		arrangemNumCtrlY.SetWindowTextW(numY);
+	}
+
+	// 저장폴더 셋팅
+	int i = strFilesPath[0].ReverseFind('\\');			// 파일 이름을 지우기 위해서 오른쪽 마지막 '/'를 찾는다.
+	saveDefFolder = strFilesPath[0].Left(i) + _T("\\");	// i칸까지 경로가 확보된다(뒤에 있는 파일 이름이 지워짐)
+	//AfxMessageBox(saveDefFolder);
+
+	AfxMessageBox(strFilesCnt + _T("개의 사진을 불러왔습니다."));
 
 	CDialogEx::OnDropFiles(hDropInfo);
 }
 
-void CPhotoMergeDlg::OnBnClickedWindowCheck1()
+
+// 사이즈 선택 함수
+void CPhotoMergeDlg::OnSelectMergeSizeCombo()
 {
-	if (mWinBtn)
+
+}
+
+
+// 항상 위 함수
+void CPhotoMergeDlg::OnClickWindowTopMostCheck()
+{
+	if (windowTopMost)
 	{
 		//AfxMessageBox(_T("UnChecked"));
 		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-		mWinBtn = false;
+		windowTopMost = false;
 	}
-	else if (mWinBtn == false)
+	else if (windowTopMost == false)
 	{
 		//AfxMessageBox(_T("Checked"));
 		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-		mWinBtn = true;
+		windowTopMost = true;
 	}
 }
 
-// 사이즈 선택 함수
-void CPhotoMergeDlg::OnCbnSelchangeSizeCombo1()
-{
-	// TODO: Add your control notification handler code here
-
-}
 
 // 투명도 슬라이더 조절 함수
-void CPhotoMergeDlg::OnNMCustomdrawWindowTrnsSlide(NMHDR *pNMHDR, LRESULT *pResult)
+void CPhotoMergeDlg::OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
 	// TODO: Add your control notification handler code here
-	::SetLayeredWindowAttributes(GetSafeHwnd(), 0, mWinTrnsSlideCtrl.GetPos(), LWA_ALPHA);
+	::SetLayeredWindowAttributes(GetSafeHwnd(), 0, transSliderCtrl.GetPos(), LWA_ALPHA);
 
 	*pResult = 0;
+}
+
+
+void CPhotoMergeDlg::OnOpenSaveDefFolder()
+{
+	if (saveDefFolder != "")
+	{
+		ShellExecute(NULL, _T("open"), _T("explorer.exe"), saveDefFolder, NULL, SW_SHOW);
+	}
+	else
+	{
+		AfxMessageBox(_T("사진을 첨부해주세요."));
+	}
+}
+
+
+void CPhotoMergeDlg::OnOpenSaveDifFolder()
+{
+	ShellExecute(NULL, _T("open"), _T("explorer.exe"), saveDifFolder, NULL, SW_SHOW);
+}
+
+
+void CPhotoMergeDlg::OnSelectSaveDifFolder()
+{
+	BROWSEINFO bi;
+	TCHAR szBuffer[MAX_PATH];
+	::ZeroMemory(&bi, sizeof(BROWSEINFO));
+	::ZeroMemory(szBuffer, MAX_PATH);
+
+	bi.hwndOwner = m_hWnd;
+	bi.lpszTitle = _T("파일이 저장될 폴더를 선택해주세요.");
+	bi.ulFlags = BIF_NEWDIALOGSTYLE | BIF_EDITBOX | BIF_RETURNONLYFSDIRS;
+
+	LPITEMIDLIST itemIdList = ::SHBrowseForFolder(&bi);
+	if (::SHGetPathFromIDList(itemIdList, szBuffer))
+	{
+		// Radio버튼 설정
+		saveDefFolderRadioCtrl.SetCheck(BST_UNCHECKED);
+		saveDifFolderRadioCtrl.SetCheck(BST_CHECKED);
+
+		saveDifFolder = szBuffer;
+		saveDifFolder += _T("\\");
+		saveDifFolderCtrl.SetWindowTextW(saveDifFolder);
+	}
 }

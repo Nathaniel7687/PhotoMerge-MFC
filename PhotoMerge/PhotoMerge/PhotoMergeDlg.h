@@ -1,16 +1,10 @@
-
-// PhotoMergeDlg.h : 헤더 파일
-//
-
 #pragma once
 #include "afxwin.h"
 #include "afxcmn.h"
 
 
-// CPhotoMergeDlg 대화 상자
 class CPhotoMergeDlg : public CDialogEx
 {
-// 생성입니다.
 public:
 	CPhotoMergeDlg(CWnd* pParent = NULL);	// 표준 생성자입니다.
 
@@ -19,11 +13,10 @@ public:
 	enum { IDD = IDD_PHOTOMERGE_DIALOG };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
 
 
-// 구현입니다.
 protected:
 	HICON m_hIcon;
 
@@ -34,33 +27,45 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
+
 public:
+	// 드래그 & 드롭 관련
+	CStatic dropFilesNumCtrl;
 	afx_msg void OnDropFiles(HDROP hDropInfo);
-	afx_msg void OnBnClickedWindowCheck1();
-	BOOL mWinBtn;
-	CString mSaveFileName;
 
-	// 합성 사이즈 에디트 컨트롤러 멤버변수
-	CString mSizeEditX;
-	CString mSizeEditY;
-	CEdit mSizeEditCtrlX;
-	CEdit mSizeEditCtrlY;
+	// 합성 사이즈 관련
+	CString mergeSizeX;
+	CString mergeSizeY;
+	CEdit mergeSizeCtrlX;
+	CEdit mergeSizeCtrlY;
 
-	// 합성 배열 에디트 컨트롤러 멤버변수
-	CString mSizeEditNumX;
-	CString mSizeEditNumY;
-	CEdit mSizeEditNumCtrlX;
-	CEdit mSizeEditNumCtrlY;
+	// 합성 사이즈 콤보박스 관련
+	CComboBox mergeSizeComboCtrl;
+	afx_msg void OnSelectMergeSizeCombo();
 
-	afx_msg void OnCbnSelchangeSizeCombo1();
-	CComboBox mSizeComboCtrl;
-	CString mSizeComboVal;
+	// 합성 배열 관련
+	CString arrangemNumX;
+	CString arrangemNumY;
+	CEdit arrangemNumCtrlX;
+	CEdit arrangemNumCtrlY;
 
-	CSliderCtrl mWinTrnsSlideCtrl;
-	LONG ExtendedStyle;
-	CStatic mPhotoCntStaticCtrl;	// 드래그 드롭한 파일 갯수 표시
-	afx_msg void OnNMCustomdrawWindowTrnsSlide(NMHDR *pNMHDR, LRESULT *pResult);
+	// 항상 위 관련
+	BOOL windowTopMost;
+	afx_msg void OnClickWindowTopMostCheck();
 
-	// 저장폴더 라디오 버튼 변수
-	int mSaveFolder;
+	// 투명도 관련
+	LONG		transExtendedStyle;
+	CSliderCtrl	transSliderCtrl;
+	afx_msg void OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult);
+
+	// 저장폴더 라디오 버튼 관련
+	CString saveFileName;
+	CButton saveDefFolderRadioCtrl;
+	CButton saveDifFolderRadioCtrl;
+	CString saveDefFolder;
+	CString saveDifFolder;
+	CEdit	saveDifFolderCtrl;
+	afx_msg void OnSelectSaveDifFolder();
+	afx_msg void OnOpenSaveDefFolder();
+	afx_msg void OnOpenSaveDifFolder();
 };
