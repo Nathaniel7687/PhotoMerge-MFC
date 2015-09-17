@@ -28,4 +28,4 @@ https://github.com/Nathaniel7687/PhotoMerge-MFC
 
 Changelog
 -------------
-[Link]: https://github.com/Nathaniel7687/PhotoMerge-MFC/blob/master/PhotoMerge%20changelog
+https://github.com/Nathaniel7687/PhotoMerge-MFC/blob/master/PhotoMerge%20changelog
