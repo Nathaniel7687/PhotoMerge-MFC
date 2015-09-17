@@ -25,3 +25,7 @@ http://nancom.tistory.com/246
 Github
 -------------
 https://github.com/Nathaniel7687/PhotoMerge-MFC
+
+Changelog
+-------------
+[Link]: https://github.com/Nathaniel7687/PhotoMerge-MFC/blob/master/PhotoMerge%20changelog
