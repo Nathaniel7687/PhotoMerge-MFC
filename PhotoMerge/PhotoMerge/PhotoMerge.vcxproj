@@ -213,8 +213,6 @@
     <None Include="res\PhotoMerge.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\Desktop\Untitled-12.ico" />
-    <Image Include="..\..\..\..\..\Desktop\Untitled-12.png" />
     <Image Include="res\icon1.ico" />
     <Image Include="res\PhotoMerge.ico" />
   </ItemGroup>

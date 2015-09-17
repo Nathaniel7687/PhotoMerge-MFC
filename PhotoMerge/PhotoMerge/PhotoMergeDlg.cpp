@@ -393,20 +393,25 @@ void CPhotoMergeDlg::OnMergePhotos()
 		CString tempArrangemNumX, tempArrangemNumY;
 		arrangemNumCtrlX.GetWindowTextW(tempArrangemNumX);
 		arrangemNumCtrlY.GetWindowTextW(tempArrangemNumY);
-		int arrangemX = _ttoi(tempArrangemNumX);
-		int arrangemY = _ttoi(tempArrangemNumX);
+		int arrX = _ttoi(tempArrangemNumX);
+		int arrY = _ttoi(tempArrangemNumY);
 
 		CString tempArrangemSpace;
 		arrangemSpaceCtrl.GetWindowTextW(tempArrangemSpace);
-		int arrangemSpace = _ttoi(tempArrangemSpace);
+		int arrSpace = _ttoi(tempArrangemSpace);
 
 		// 배경 그리기
 		Graphics background(*dc);
 		SolidBrush solidBrush(Color(255, 255, 255));
 		background.FillRectangle(&solidBrush, 0, 0, mergeX, mergeY);
 
+		int eaPhotoSizeX = (mergeX - (arrX + 1) * arrSpace) / arrX;
+		int eaPhotoSizeY = (mergeY - (arrY + 1) * arrSpace) / arrY;
+
+		int posX = arrSpace;
+		int posY = arrSpace;
 		// ArrangemNumY 개수
-		for (int i = 0; i < arrangemY; i++)
+		for (int i = 0, posY = arrSpace; i < arrY; i++, posY += (eaPhotoSizeY + arrSpace))
 		{
 			Graphics graphics(*dc);
 			CImage image;
@@ -419,11 +424,11 @@ void CPhotoMergeDlg::OnMergePhotos()
 			}
 
 			image.Draw(graphics.GetHDC(),
-				arrangemSpace, arrangemSpace, 100, 100);
+				posX, posY, eaPhotoSizeX, eaPhotoSizeY);
 			image.Destroy();
 
 			// ArrangemNumX 개수
-			for (int j = 0; j < arrangemX; j++)
+			for (int j = 0, posX = arrSpace; j < arrX; j++, posX += (eaPhotoSizeX + arrSpace))
 			{
 				Graphics graphics(*dc);
 				CImage image;
@@ -436,7 +441,7 @@ void CPhotoMergeDlg::OnMergePhotos()
 				}
 
 				image.Draw(graphics.GetHDC(),
-					arrangemSpace, arrangemSpace, 100, 100);
+					posX, posY, eaPhotoSizeX, eaPhotoSizeY);
 				image.Destroy();
 			}
 		}
