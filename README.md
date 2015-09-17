@@ -12,7 +12,7 @@ How to Use
 **2. 합성할 사진들을 프로그램으로 드래그 한다.**  
 ![Readme02](http://cfile27.uf.tistory.com/image/2762FC3955FAF7DD048F99)  
 
-**3. 마음대로 셋팅을 수정 후 합성 버튼을 누른다.**  
+**3. 원하는대로 셋팅을 수정 후 합성 버튼을 누른다.**  
 ![Readme03](http://cfile4.uf.tistory.com/image/2563083955FAF7DF04846F)  
 
 **4. 결과물을 확인한다.**  
