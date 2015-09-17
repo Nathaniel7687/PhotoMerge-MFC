@@ -110,9 +110,9 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DROPFILES()
-	ON_CBN_SELCHANGE(IDC_SIZE_COMBO1, &CPhotoMergeDlg::OnSelectMergeSizeCombo)
 	ON_BN_CLICKED(IDC_WINDOW_CHECK1, &CPhotoMergeDlg::OnClickWindowTopMostCheck)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_WINDOW_TRNS_SLIDE, &CPhotoMergeDlg::OnNMCustomdrawTransSlider)
+	ON_CBN_SELCHANGE(IDC_SIZE_COMBO1, &CPhotoMergeDlg::OnSelectMergeSizeCombo)
 	ON_BN_CLICKED(IDC_SAVE_SET_BUTTON2, &CPhotoMergeDlg::OnSelectSaveDifFolder)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON1, &CPhotoMergeDlg::OnOpenSaveDefFolder)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON2, &CPhotoMergeDlg::OnOpenSaveDifFolder)
@@ -148,7 +148,7 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	// 이 대화 상자의 아이콘을 설정합니다.  응용 프로그램의 주 창이 대화 상자가 아닐 경우에는
 	//  프레임워크가 이 작업을 자동으로 수행합니다.
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
-	//SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
+	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	// 크기 조절에 콤보 박스 셋팅
@@ -207,27 +207,27 @@ void CPhotoMergeDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // 문서/뷰 모델을 사용하는 MFC 응용 프로그램의 경우에는 프레임워크에서 이 작업을 자동으로 수행합니다.
 void CPhotoMergeDlg::OnPaint()
 {
-	//if (IsIconic())
-	//{
-	//	CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
 
-	//	SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
+		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-	//	// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
-	//	int cxIcon = GetSystemMetrics(SM_CXICON);
-	//	int cyIcon = GetSystemMetrics(SM_CYICON);
-	//	CRect rect;
-	//	GetClientRect(&rect);
-	//	int x = (rect.Width() - cxIcon + 1) / 2;
-	//	int y = (rect.Height() - cyIcon + 1) / 2;
+		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
 
-	//	// 아이콘을 그립니다.
-	//	dc.DrawIcon(x, y, m_hIcon);
-	//}
-	//else
-	//{
-	//	CDialogEx::OnPaint();
-	//}
+		// 아이콘을 그립니다.
+		dc.DrawIcon(x, y, m_hIcon);
+	}
+	else
+	{
+		CDialogEx::OnPaint();
+	}
 }
 
 
@@ -336,17 +336,6 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 }
 
 
-// 사이즈 선택 함수
-void CPhotoMergeDlg::OnSelectMergeSizeCombo()
-{
-	if (mergeSizeComboCtrl.GetCurSel() == 1)
-	{
-		mergeSizeCtrlX.SetWindowTextW(_T("640"));
-		mergeSizeCtrlY.SetWindowTextW(_T("480"));
-	}
-}
-
-
 // 항상 위 함수
 void CPhotoMergeDlg::OnClickWindowTopMostCheck()
 {
@@ -376,6 +365,18 @@ void CPhotoMergeDlg::OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 
+// 사이즈 선택 함수
+void CPhotoMergeDlg::OnSelectMergeSizeCombo()
+{
+	if (mergeSizeComboCtrl.GetCurSel() == 1)
+	{
+		mergeSizeCtrlX.SetWindowTextW(_T("640"));
+		mergeSizeCtrlY.SetWindowTextW(_T("480"));
+	}
+}
+
+
+// 기본 저장 폴더 열기 
 void CPhotoMergeDlg::OnOpenSaveDefFolder()
 {
 	if (saveDefFolder != "")
@@ -389,18 +390,21 @@ void CPhotoMergeDlg::OnOpenSaveDefFolder()
 }
 
 
+// 지정된 저장 폴더 열기 
 void CPhotoMergeDlg::OnOpenSaveDifFolder()
 {
 	ShellExecute(NULL, _T("open"), _T("explorer.exe"), saveDifFolder, NULL, SW_SHOW);
 }
 
 
+// 파일 이름 변경시 이름 변수 변경 함수
 void CPhotoMergeDlg::OnEnChangeSaveEdit1()
 {
 	saveFileNameCtrl.GetWindowTextW(saveFileName);
 }
 
 
+// 저장 폴더 지정하는 브라우저
 void CPhotoMergeDlg::OnSelectSaveDifFolder()
 {
 	BROWSEINFO bi;
@@ -426,6 +430,7 @@ void CPhotoMergeDlg::OnSelectSaveDifFolder()
 }
 
 
+// 합성 단추 함수
 void CPhotoMergeDlg::OnMergePhotos()
 {
 	if (dropFilesNum < 1)
@@ -433,7 +438,6 @@ void CPhotoMergeDlg::OnMergePhotos()
 		AfxMessageBox(_T("1개 이상의 사진이 필요합니다."));
 		return;
 	}
-
 
 	if (saveDefFolderRadioCtrl.GetCheck())
 	{
@@ -571,6 +575,7 @@ void CPhotoMergeDlg::OnMergePhotos()
 }
 
 
+// 이미지 저장에 필요한 함수
 int CPhotoMergeDlg::GetEncoderClsid(const WCHAR *format, CLSID *pClsid)
 {
 	UINT num = 0;
@@ -599,6 +604,7 @@ int CPhotoMergeDlg::GetEncoderClsid(const WCHAR *format, CLSID *pClsid)
 }
 
 
+// About Box 여는 함수
 void CPhotoMergeDlg::OnBnClickedAbout()
 {
 	static CAboutDlg Dlg;

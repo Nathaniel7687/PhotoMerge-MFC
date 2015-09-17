@@ -60,15 +60,6 @@ public:
 	CEdit	arrangemNumCtrlY;
 	CEdit	arrangemSpaceCtrl;
 
-	// 항상 위 관련
-	BOOL windowTopMost;
-	afx_msg void OnClickWindowTopMostCheck();
-
-	// 투명도 관련
-	LONG		transExtendedStyle;
-	CSliderCtrl	transSliderCtrl;
-	afx_msg void OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult);
-
 	// 저장폴더 라디오 버튼 관련
 	CString saveFileName;
 	CEdit	saveFileNameCtrl;
@@ -83,10 +74,21 @@ public:
 	afx_msg void OnOpenSaveDefFolder();
 	afx_msg void OnOpenSaveDifFolder();
 
+	// GDI+ 관련
 	ULONG_PTR			gdiplustToken;
 	GdiplusStartupInput	gdiplusStartupInput;
 	afx_msg void OnMergePhotos();
 
+	// 이미지 저장 관련
 	int GetEncoderClsid(const WCHAR *format, CLSID *pClsid);
 	afx_msg void OnBnClickedAbout();
+
+	// 항상 위 관련
+	BOOL windowTopMost;
+	afx_msg void OnClickWindowTopMostCheck();
+
+	// 투명도 관련
+	LONG		transExtendedStyle;
+	CSliderCtrl	transSliderCtrl;
+	afx_msg void OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult);
 };
