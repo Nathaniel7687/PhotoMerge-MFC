@@ -33,7 +33,10 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
-	void checkIntToCString(int);
+	void checkIntToCString(CString str, int w);
+	void checkIntToCString(CString str, int w, int x);
+	void checkIntToCString(CString str, int w, int x, int y);
+	void checkIntToCString(CString str, int w, int x, int y, int z);
 
 
 public:
@@ -72,11 +75,14 @@ public:
 
 	// 저장폴더 라디오 버튼 관련
 	CString saveFileName;
+	CEdit	saveFileNameCtrl;
 	CButton saveDefFolderRadioCtrl;
 	CButton saveDifFolderRadioCtrl;
+	CString saveFolder;
 	CString saveDefFolder;
 	CString saveDifFolder;
 	CEdit	saveDifFolderCtrl;
+	afx_msg void OnEnChangeSaveEdit1();
 	afx_msg void OnSelectSaveDifFolder();
 	afx_msg void OnOpenSaveDefFolder();
 	afx_msg void OnOpenSaveDifFolder();
@@ -85,5 +91,5 @@ public:
 	GdiplusStartupInput	gdiplusStartupInput;
 	afx_msg void OnMergePhotos();
 
-	void Wait(DWORD);
+	int GetEncoderClsid(const WCHAR *format, CLSID *pClsid);
 };

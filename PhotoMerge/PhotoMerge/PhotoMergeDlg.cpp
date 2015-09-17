@@ -14,12 +14,12 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 // 구현입니다.
@@ -68,6 +68,7 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SIZE_EDIT2, mergeSizeCtrlY);
 	DDX_Text(pDX, IDC_SIZE_EDIT2, mergeSizeY);
 	DDV_MaxChars(pDX, mergeSizeY, 4);
+	DDX_Control(pDX, IDC_SIZE_COMBO1, mergeSizeComboCtrl);
 
 	DDX_Control(pDX, IDC_SIZE_EDIT3, arrangemNumCtrlX);
 	DDX_Text(pDX, IDC_SIZE_EDIT3, arrangemNumX);
@@ -81,10 +82,11 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MaxChars(pDX, arrangemSpace, 4);
 
 	DDX_Check(pDX, IDC_WINDOW_CHECK1, windowTopMost);
+	DDX_Control(pDX, IDC_WINDOW_TRNS_SLIDE, transSliderCtrl);
+
+	DDX_Control(pDX, IDC_SAVE_EDIT1, saveFileNameCtrl);
 	DDX_Text(pDX, IDC_SAVE_EDIT1, saveFileName);
 	DDV_MaxChars(pDX, saveFileName, 20);
-	DDX_Control(pDX, IDC_SIZE_COMBO1, mergeSizeComboCtrl);
-	DDX_Control(pDX, IDC_WINDOW_TRNS_SLIDE, transSliderCtrl);
 	DDX_Control(pDX, IDC_SAVE_RADIO1, saveDefFolderRadioCtrl);
 	DDX_Control(pDX, IDC_SAVE_RADIO2, saveDifFolderRadioCtrl);
 	DDX_Control(pDX, IDC_SAVE_EDIT2, saveDifFolderCtrl);
@@ -102,7 +104,8 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON1, &CPhotoMergeDlg::OnOpenSaveDefFolder)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON2, &CPhotoMergeDlg::OnOpenSaveDifFolder)
 	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
-//	ON_WM_DESTROY()
+	//	ON_WM_DESTROY()
+	ON_EN_CHANGE(IDC_SAVE_EDIT1, &CPhotoMergeDlg::OnEnChangeSaveEdit1)
 END_MESSAGE_MAP()
 
 
@@ -141,24 +144,24 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	mergeSizeComboCtrl.AddString(_T("사용자 지정"));
 	mergeSizeComboCtrl.AddString(_T("640 x 480(4:3)"));
 	mergeSizeComboCtrl.SetCurSel(1);
-	
+
 	// 항상 위 체크
 	if (windowTopMost)
 	{
 		//AfxMessageBox(_T("Checked"));
 		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	}
-	
+
 	// 다이얼로그 투명화를 위한 초기 셋팅
 	transExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
 	SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, transExtendedStyle | WS_EX_LAYERED);
-	
+
 	// 투명도 슬라이더 셋팅
 	transSliderCtrl.SetRange(80, 255);	// 투명도 슬라이더 범위
 	transSliderCtrl.SetPos(255);
 	transSliderCtrl.SetLineSize(2);
 	::SetLayeredWindowAttributes(GetSafeHwnd(), 0, transSliderCtrl.GetPos(), LWA_ALPHA);
-	
+
 	// 저장폴더 Radio버튼 설정
 	saveDefFolderRadioCtrl.SetCheck(BST_CHECKED);
 	saveDifFolderRadioCtrl.SetCheck(BST_UNCHECKED);
@@ -224,13 +227,33 @@ HCURSOR CPhotoMergeDlg::OnQueryDragIcon()
 }
 
 
-void CPhotoMergeDlg::checkIntToCString(int x)
+void CPhotoMergeDlg::checkIntToCString(CString str, int w)
 {
 	CString temp;
-	temp.Format(_T("%d"), x);
-	AfxMessageBox(temp);
+	temp.Format(_T("%d"), w);
+	AfxMessageBox(str + temp);
 }
 
+void CPhotoMergeDlg::checkIntToCString(CString str, int w, int x)
+{
+	CString temp;
+	temp.Format(_T("%d, %d"), w, x);
+	AfxMessageBox(str + temp);
+}
+
+void CPhotoMergeDlg::checkIntToCString(CString str, int w, int x, int y)
+{
+	CString temp;
+	temp.Format(_T("%d, %d, %d"), w, x, y);
+	AfxMessageBox(str + temp);
+}
+
+void CPhotoMergeDlg::checkIntToCString(CString str, int w, int x, int y, int z)
+{
+	CString temp;
+	temp.Format(_T("%d, %d, %d, %d"), w, x, y, z);
+	AfxMessageBox(str + temp);
+}
 
 void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 {
@@ -238,6 +261,9 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 	DWORD nBuffer = 0;
 
 	CString strFilesCnt;
+
+	for (int i = 0; i < 100; i++)
+		dropFilesPath[i] = "";
 
 	// 드래그 드롭된 파일의 갯수
 	dropFilesNum = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
@@ -257,7 +283,7 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 		strFilePath.ReleaseBuffer();
 		//AfxMessageBox(dropFilesPath[i]);
 	}
-	::DragFinish(hDropInfo);
+	DragFinish(hDropInfo);
 
 	// 드래그 드롭된 파일의 갯수 Static Text Box에 표시
 	strFilesCnt.Format(_T("%d"), dropFilesNum);
@@ -353,6 +379,12 @@ void CPhotoMergeDlg::OnOpenSaveDifFolder()
 }
 
 
+void CPhotoMergeDlg::OnEnChangeSaveEdit1()
+{
+	saveFileNameCtrl.GetWindowTextW(saveFileName);
+}
+
+
 void CPhotoMergeDlg::OnSelectSaveDifFolder()
 {
 	BROWSEINFO bi;
@@ -379,10 +411,28 @@ void CPhotoMergeDlg::OnSelectSaveDifFolder()
 
 
 void CPhotoMergeDlg::OnMergePhotos()
-{	
-	if (GdiplusStartup(&gdiplustToken, &gdiplusStartupInput, NULL) == Ok) {
-		CDC *dc = this->GetDC();
+{
+	if (saveDefFolderRadioCtrl.GetCheck())
+	{
+		saveFolder = saveDefFolder + saveFileName + _T(".jpg");
+	}
+	else
+	{
+		saveFolder = saveDifFolder + saveFileName + _T(".jpg");
+	}
 
+	CFileFind pFind;
+	BOOL bRet = pFind.FindFile(saveFolder);
+	if (bRet)
+	{
+		int nResult;
+		nResult = AfxMessageBox(saveFolder + _T(" 파일이 이미 존재 합니다.\n덮어 쓰시겠습니까?"), MB_YESNO | MB_ICONWARNING);
+		
+		if (nResult == IDNO)
+			return;
+	}
+
+	if (GdiplusStartup(&gdiplustToken, &gdiplusStartupInput, NULL) == Ok) {
 		// Editbox에서 정보 가져오기
 		CString tempMergeX, tempMergeY;
 		mergeSizeCtrlX.GetWindowTextW(tempMergeX);
@@ -393,46 +443,46 @@ void CPhotoMergeDlg::OnMergePhotos()
 		CString tempArrangemNumX, tempArrangemNumY;
 		arrangemNumCtrlX.GetWindowTextW(tempArrangemNumX);
 		arrangemNumCtrlY.GetWindowTextW(tempArrangemNumY);
-		int arrX = _ttoi(tempArrangemNumX);
-		int arrY = _ttoi(tempArrangemNumY);
+		//int arrX = _ttoi(tempArrangemNumX);
+		//int arrY = _ttoi(tempArrangemNumY);
+		int arrX = 2;
+		int arrY = 2;
 
 		CString tempArrangemSpace;
 		arrangemSpaceCtrl.GetWindowTextW(tempArrangemSpace);
 		int arrSpace = _ttoi(tempArrangemSpace);
 
-		// 배경 그리기
-		Graphics background(*dc);
-		SolidBrush solidBrush(Color(255, 255, 255));
-		background.FillRectangle(&solidBrush, 0, 0, mergeX, mergeY);
-
+		// 각각의 사진이 가져야할 크기
 		int eaPhotoSizeX = (mergeX - (arrX + 1) * arrSpace) / arrX;
 		int eaPhotoSizeY = (mergeY - (arrY + 1) * arrSpace) / arrY;
-
 		int posX = arrSpace;
 		int posY = arrSpace;
+
+		// 그리기 작업을 위한 객체 선언
+		CDC *dc = GetDC();
+		CDC memDC;
+		memDC.CreateCompatibleDC(dc);
+
+		CBitmap bmpbuffer;
+		bmpbuffer.CreateCompatibleBitmap(dc, mergeX, mergeY); // 호환성 조절
+		CBitmap *oldBitmap = (CBitmap *)memDC.SelectObject(&bmpbuffer);
+
+		CBrush brush;
+		memDC.FillSolidRect(0, 0, mergeX, mergeY, RGB(255, 255, 255));
+
+		Graphics graphics(memDC);
+		CImage	image;
+		CRect	rc;
+		HRESULT hResult = NULL;
+
 		// ArrangemNumY 개수
-		for (int i = 0, posY = arrSpace; i < arrY; i++, posY += (eaPhotoSizeY + arrSpace))
+		int num = 0;
+		for (int i = 0; i < arrY; i++, posX = arrSpace, posY += (eaPhotoSizeY + arrSpace))
 		{
-			Graphics graphics(*dc);
-			CImage image;
-			HRESULT hResult = image.Load(_T("C:\\Users\\natha\\Pictures\\Screenshots\\Screenshot (3).png"));
-
-			if (FAILED(hResult))
-			{
-				AfxMessageBox(_T("사진파일을 인식할 수 없습니다.\n다시 확인해주세요."));
-				return;
-			}
-
-			image.Draw(graphics.GetHDC(),
-				posX, posY, eaPhotoSizeX, eaPhotoSizeY);
-			image.Destroy();
-
 			// ArrangemNumX 개수
-			for (int j = 0, posX = arrSpace; j < arrX; j++, posX += (eaPhotoSizeX + arrSpace))
+			for (int j = 0; j < arrX; j++, posX += (eaPhotoSizeX + arrSpace))
 			{
-				Graphics graphics(*dc);
-				CImage image;
-				HRESULT hResult = image.Load(_T("C:\\Users\\natha\\Pictures\\Screenshots\\Screenshot (3).png"));
+				hResult = image.Load(dropFilesPath[num++]);
 
 				if (FAILED(hResult))
 				{
@@ -440,13 +490,40 @@ void CPhotoMergeDlg::OnMergePhotos()
 					return;
 				}
 
-				image.Draw(graphics.GetHDC(),
-					posX, posY, eaPhotoSizeX, eaPhotoSizeY);
+				//checkIntToCString(_T("좌표 "), posX, posY, eaPhotoSizeX, eaPhotoSizeY);
+				rc.SetRect(posX, posY, posX + eaPhotoSizeX, posY + eaPhotoSizeY);
+				image.Draw(graphics.GetHDC(), rc, InterpolationModeDefault);
 				image.Destroy();
+				graphics.ReleaseHDC(memDC);
 			}
 		}
 
-		ReleaseDC(dc);
+		HPALETTE hpal;
+		hpal = (HPALETTE)GetStockObject(DEFAULT_PALETTE);
+
+		//Gdiplus::Bitmap을 만든다!!!  
+		Bitmap bitmap((HBITMAP)bmpbuffer, hpal);
+		int width = bitmap.GetWidth();
+		int height = bitmap.GetHeight();
+
+		/* GDI plus로 저장하기 !! */
+		CLSID				encoderClsid;
+		EncoderParameters	encoderParameters;
+		ULONG				quality;
+
+		encoderParameters.Count = 1;
+		encoderParameters.Parameter[0].Guid = EncoderQuality;
+		encoderParameters.Parameter[0].Type = EncoderParameterValueTypeLong;
+		encoderParameters.Parameter[0].NumberOfValues = 1;
+
+		// 이미지 jpg 저장시 Quality level 100.
+		quality = 100;
+		encoderParameters.Parameter[0].Value = &quality;
+
+		GetEncoderClsid(_T("image/jpeg"), &encoderClsid);
+		bitmap.Save(saveFolder, &encoderClsid, &encoderParameters);
+
+		ReleaseDC(&memDC);  
 	}
 	else
 	{
@@ -457,18 +534,30 @@ void CPhotoMergeDlg::OnMergePhotos()
 	GdiplusShutdown(gdiplustToken);
 }
 
-void CPhotoMergeDlg::Wait(DWORD dwMillisecond)
-{
-	MSG msg;
-	DWORD dwStart;
-	dwStart = GetTickCount();
 
-	while (GetTickCount() - dwStart < dwMillisecond)
+int CPhotoMergeDlg::GetEncoderClsid(const WCHAR *format, CLSID *pClsid)
+{
+	UINT num = 0;
+	UINT size = 0;
+	ImageCodecInfo * pImageCodecInfo = NULL;
+	GetImageEncodersSize(&num, &size);
+	if (size == 0)
+		return -1;
+
+	pImageCodecInfo = (ImageCodecInfo *)(malloc(size));
+	if (pImageCodecInfo == NULL)
+		return -1;
+
+	GetImageEncoders(num, size, pImageCodecInfo);
+	for (UINT j = 0; j < num; ++j)
 	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			*pClsid = pImageCodecInfo[j].Clsid;
+			free(pImageCodecInfo);
+			return j;
 		}
 	}
+	free(pImageCodecInfo);
+	return -1;
 }
