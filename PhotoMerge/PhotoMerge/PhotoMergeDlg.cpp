@@ -119,8 +119,6 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
 	ON_EN_CHANGE(IDC_SAVE_EDIT1, &CPhotoMergeDlg::OnEnChangeSaveEdit1)
 	ON_BN_CLICKED(IDABOUT, &CPhotoMergeDlg::OnBnClickedAbout)
-	ON_EN_CHANGE(IDC_SIZE_EDIT1, &CPhotoMergeDlg::OnEnChangeSizeEdit1)
-	ON_EN_CHANGE(IDC_SIZE_EDIT2, &CPhotoMergeDlg::OnEnChangeSizeEdit2)
 END_MESSAGE_MAP()
 
 
@@ -719,26 +717,4 @@ void CPhotoMergeDlg::OnBnClickedAbout()
 		Dlg.Create(IDD_ABOUTBOX);
 
 	Dlg.ShowWindow(SW_SHOW);
-}
-
-
-void CPhotoMergeDlg::OnEnChangeSizeEdit1()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
-}
-
-
-void CPhotoMergeDlg::OnEnChangeSizeEdit2()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
 }

@@ -91,6 +91,4 @@ public:
 	LONG		transExtendedStyle;
 	CSliderCtrl	transSliderCtrl;
 	afx_msg void OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnEnChangeSizeEdit1();
-	afx_msg void OnEnChangeSizeEdit2();
 };
