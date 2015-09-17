@@ -480,7 +480,7 @@ void CPhotoMergeDlg::OnMergePhotos()
 		for (int i = 0; i < arrY; i++, posX = arrSpace, posY += (eaPhotoSizeY + arrSpace))
 		{
 			// ArrangemNumX 개수
-			for (int j = 0; j < arrX; j++, posX += (eaPhotoSizeX + arrSpace))
+			for (int j = 0; (j < arrX) && (num < dropFilesNum); j++, posX += (eaPhotoSizeX + arrSpace))
 			{
 				hResult = image.Load(dropFilesPath[num++]);
 
@@ -488,6 +488,16 @@ void CPhotoMergeDlg::OnMergePhotos()
 				{
 					AfxMessageBox(_T("사진파일을 인식할 수 없습니다.\n다시 확인해주세요."));
 					return;
+				}
+
+				if ((num == dropFilesNum) && (dropFilesNum % 2 == 1))
+				{
+					rc.SetRect(posX, posY, posX + eaPhotoSizeX * arrX + arrSpace, posY + eaPhotoSizeY);
+					image.Draw(graphics.GetHDC(), rc, InterpolationModeDefault);
+					image.Destroy();
+					graphics.ReleaseHDC(memDC);
+
+					continue;
 				}
 
 				//checkIntToCString(_T("좌표 "), posX, posY, eaPhotoSizeX, eaPhotoSizeY);
