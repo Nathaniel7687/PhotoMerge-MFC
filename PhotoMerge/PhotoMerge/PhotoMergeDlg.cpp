@@ -119,6 +119,8 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
 	ON_EN_CHANGE(IDC_SAVE_EDIT1, &CPhotoMergeDlg::OnEnChangeSaveEdit1)
 	ON_BN_CLICKED(IDABOUT, &CPhotoMergeDlg::OnBnClickedAbout)
+	ON_EN_CHANGE(IDC_SIZE_EDIT1, &CPhotoMergeDlg::OnEnChangeSizeEdit1)
+	ON_EN_CHANGE(IDC_SIZE_EDIT2, &CPhotoMergeDlg::OnEnChangeSizeEdit2)
 END_MESSAGE_MAP()
 
 
@@ -154,6 +156,26 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	// 크기 조절에 콤보 박스 셋팅
 	mergeSizeComboCtrl.AddString(_T("사용자 지정"));
 	mergeSizeComboCtrl.AddString(_T("640 x 480(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("800 x 600(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("1024 x 768(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("1280 x 960(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("1600 x 1200(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("1920 x 1440(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("2560 x 1920(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("3200 x 2400(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("4096 x 3072(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("6400 x 4800(4:3)"));
+	mergeSizeComboCtrl.AddString(_T("640 x 360(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("1024 x 576(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("1280 x 720(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("1600 x 900(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("2048 x 1152(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("2560 x 1440(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("3200 x 1800(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("3840 x 2160(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("5120 x 2880(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("7680 x 4320(16:9)"));
+	mergeSizeComboCtrl.AddString(_T("8192 x 4608(16:9)"));
 	mergeSizeComboCtrl.SetCurSel(1);
 
 	// 항상 위 체크
@@ -297,7 +319,7 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 	DragFinish(hDropInfo);
 
 	// 드래그 드롭된 파일의 갯수 Static Text Box에 표시
-	strFilesCnt.Format(_T("%d"), dropFilesNum);
+	strFilesCnt.Format(_T("첨부된 사진: %d"), dropFilesNum);
 	dropFilesNumCtrl.SetWindowTextW(strFilesCnt);
 
 	// 사진 배열 값 Edit Text Box에 표시
@@ -330,7 +352,7 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 	saveDefFolder = dropFilesPath[0].Left(i) + _T("\\");	// i칸까지 경로가 확보된다(뒤에 있는 파일 이름이 지워짐)
 	//AfxMessageBox(saveDefFolder);
 
-	AfxMessageBox(strFilesCnt + _T("개의 사진을 불러왔습니다."));
+	//AfxMessageBox(strFilesCnt + _T("개의 사진을 불러왔습니다."));
 
 	CDialogEx::OnDropFiles(hDropInfo);
 }
@@ -368,10 +390,94 @@ void CPhotoMergeDlg::OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult)
 // 사이즈 선택 함수
 void CPhotoMergeDlg::OnSelectMergeSizeCombo()
 {
-	if (mergeSizeComboCtrl.GetCurSel() == 1)
+	switch (mergeSizeComboCtrl.GetCurSel())
 	{
+	case 1:
 		mergeSizeCtrlX.SetWindowTextW(_T("640"));
 		mergeSizeCtrlY.SetWindowTextW(_T("480"));
+		break;
+	case 2:
+		mergeSizeCtrlX.SetWindowTextW(_T("800"));
+		mergeSizeCtrlY.SetWindowTextW(_T("600"));
+		break;
+	case 3:
+		mergeSizeCtrlX.SetWindowTextW(_T("1024"));
+		mergeSizeCtrlY.SetWindowTextW(_T("768"));
+		break;
+	case 4:
+		mergeSizeCtrlX.SetWindowTextW(_T("1280"));
+		mergeSizeCtrlY.SetWindowTextW(_T("960"));
+		break;
+	case 5:
+		mergeSizeCtrlX.SetWindowTextW(_T("1600"));
+		mergeSizeCtrlY.SetWindowTextW(_T("1200"));
+		break;
+	case 6:
+		mergeSizeCtrlX.SetWindowTextW(_T("1920"));
+		mergeSizeCtrlY.SetWindowTextW(_T("1440"));
+		break;
+	case 7:
+		mergeSizeCtrlX.SetWindowTextW(_T("2560"));
+		mergeSizeCtrlY.SetWindowTextW(_T("1920"));
+		break;
+	case 8:
+		mergeSizeCtrlX.SetWindowTextW(_T("3200"));
+		mergeSizeCtrlY.SetWindowTextW(_T("2400"));
+		break;
+	case 9:
+		mergeSizeCtrlX.SetWindowTextW(_T("4096"));
+		mergeSizeCtrlY.SetWindowTextW(_T("3072"));
+		break;
+	case 10:
+		mergeSizeCtrlX.SetWindowTextW(_T("6400"));
+		mergeSizeCtrlY.SetWindowTextW(_T("4800"));
+		break;
+	case 11:
+		mergeSizeCtrlX.SetWindowTextW(_T("640"));
+		mergeSizeCtrlY.SetWindowTextW(_T("360"));
+		break;
+	case 12:
+		mergeSizeCtrlX.SetWindowTextW(_T("1024"));
+		mergeSizeCtrlY.SetWindowTextW(_T("480"));
+		break;
+	case 13:
+		mergeSizeCtrlX.SetWindowTextW(_T("1280"));
+		mergeSizeCtrlY.SetWindowTextW(_T("720"));
+		break;
+	case 14:
+		mergeSizeCtrlX.SetWindowTextW(_T("1600"));
+		mergeSizeCtrlY.SetWindowTextW(_T("900"));
+		break;
+	case 15:
+		mergeSizeCtrlX.SetWindowTextW(_T("2048"));
+		mergeSizeCtrlY.SetWindowTextW(_T("1152"));
+		break;
+	case 16:
+		mergeSizeCtrlX.SetWindowTextW(_T("2560"));
+		mergeSizeCtrlY.SetWindowTextW(_T("1440"));
+		break;
+	case 17:
+		mergeSizeCtrlX.SetWindowTextW(_T("3200"));
+		mergeSizeCtrlY.SetWindowTextW(_T("1800"));
+		break;
+	case 18:
+		mergeSizeCtrlX.SetWindowTextW(_T("3840"));
+		mergeSizeCtrlY.SetWindowTextW(_T("2160"));
+		break;
+	case 19:
+		mergeSizeCtrlX.SetWindowTextW(_T("5120"));
+		mergeSizeCtrlY.SetWindowTextW(_T("2880"));
+		break;
+	case 20:
+		mergeSizeCtrlX.SetWindowTextW(_T("7680"));
+		mergeSizeCtrlY.SetWindowTextW(_T("4320"));
+		break;
+	case 21:
+		mergeSizeCtrlX.SetWindowTextW(_T("8192"));
+		mergeSizeCtrlY.SetWindowTextW(_T("4608"));
+		break;
+	default:
+		break;
 	}
 }
 
@@ -571,7 +677,7 @@ void CPhotoMergeDlg::OnMergePhotos()
 	}
 
 	GdiplusShutdown(gdiplustToken);
-	AfxMessageBox(_T("합성한 사진이 저장되었습니다.\n경로: ") + saveFolder);
+	AfxMessageBox(_T("합성한 사진이 저장되었습니다.\n경로: \"") + saveFolder + _T("\""));
 }
 
 
@@ -613,4 +719,26 @@ void CPhotoMergeDlg::OnBnClickedAbout()
 		Dlg.Create(IDD_ABOUTBOX);
 
 	Dlg.ShowWindow(SW_SHOW);
+}
+
+
+void CPhotoMergeDlg::OnEnChangeSizeEdit1()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+}
+
+
+void CPhotoMergeDlg::OnEnChangeSizeEdit2()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
 }
