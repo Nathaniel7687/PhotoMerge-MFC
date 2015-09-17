@@ -443,10 +443,8 @@ void CPhotoMergeDlg::OnMergePhotos()
 		CString tempArrangemNumX, tempArrangemNumY;
 		arrangemNumCtrlX.GetWindowTextW(tempArrangemNumX);
 		arrangemNumCtrlY.GetWindowTextW(tempArrangemNumY);
-		//int arrX = _ttoi(tempArrangemNumX);
-		//int arrY = _ttoi(tempArrangemNumY);
-		int arrX = 2;
-		int arrY = 2;
+		int arrX = _ttoi(tempArrangemNumX);
+		int arrY = _ttoi(tempArrangemNumY);
 
 		CString tempArrangemSpace;
 		arrangemSpaceCtrl.GetWindowTextW(tempArrangemSpace);
@@ -492,7 +490,10 @@ void CPhotoMergeDlg::OnMergePhotos()
 
 				if ((num == dropFilesNum) && (dropFilesNum % 2 == 1))
 				{
-					rc.SetRect(posX, posY, posX + eaPhotoSizeX * arrX + arrSpace, posY + eaPhotoSizeY);
+					// 남은 여백 구하는 공식
+					int tmpWidth = posX + eaPhotoSizeX * (arrX - j) + arrSpace * (arrX - j - 1);
+
+					rc.SetRect(posX, posY, tmpWidth, posY + eaPhotoSizeY);
 					image.Draw(graphics.GetHDC(), rc, InterpolationModeDefault);
 					image.Destroy();
 					graphics.ReleaseHDC(memDC);
@@ -500,6 +501,7 @@ void CPhotoMergeDlg::OnMergePhotos()
 					continue;
 				}
 
+				//checkIntToCString(_T("i, arrX, j, arrY "), i, arrX, j, arrY);
 				//checkIntToCString(_T("좌표 "), posX, posY, eaPhotoSizeX, eaPhotoSizeY);
 				rc.SetRect(posX, posY, posX + eaPhotoSizeX, posY + eaPhotoSizeY);
 				image.Draw(graphics.GetHDC(), rc, InterpolationModeDefault);
@@ -533,7 +535,7 @@ void CPhotoMergeDlg::OnMergePhotos()
 		GetEncoderClsid(_T("image/jpeg"), &encoderClsid);
 		bitmap.Save(saveFolder, &encoderClsid, &encoderParameters);
 
-		ReleaseDC(&memDC);  
+		ReleaseDC(&memDC);
 	}
 	else
 	{
