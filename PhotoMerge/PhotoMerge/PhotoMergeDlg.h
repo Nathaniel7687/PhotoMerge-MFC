@@ -43,7 +43,7 @@ public:
 	// 드래그 & 드롭 관련
 	int dropFilesNum;
 	CStatic dropFilesNumCtrl;
-	CString dropFilesPath[100];
+	CString dropFilesPath[1000];
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 
 	// 합성 사이즈 관련

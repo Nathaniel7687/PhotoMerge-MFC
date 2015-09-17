@@ -64,18 +64,18 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_SIZE_EDIT1, mergeSizeCtrlX);
 	DDX_Text(pDX, IDC_SIZE_EDIT1, mergeSizeX);
-	DDV_MaxChars(pDX, mergeSizeX, 4);
+	DDV_MaxChars(pDX, mergeSizeX, 5);
 	DDX_Control(pDX, IDC_SIZE_EDIT2, mergeSizeCtrlY);
 	DDX_Text(pDX, IDC_SIZE_EDIT2, mergeSizeY);
-	DDV_MaxChars(pDX, mergeSizeY, 4);
+	DDV_MaxChars(pDX, mergeSizeY, 5);
 	DDX_Control(pDX, IDC_SIZE_COMBO1, mergeSizeComboCtrl);
 
 	DDX_Control(pDX, IDC_SIZE_EDIT3, arrangemNumCtrlX);
 	DDX_Text(pDX, IDC_SIZE_EDIT3, arrangemNumX);
-	DDV_MaxChars(pDX, arrangemNumX, 2);
+	DDV_MaxChars(pDX, arrangemNumX, 3);
 	DDX_Control(pDX, IDC_SIZE_EDIT4, arrangemNumCtrlY);
 	DDX_Text(pDX, IDC_SIZE_EDIT4, arrangemNumY);
-	DDV_MaxChars(pDX, arrangemNumY, 2);
+	DDV_MaxChars(pDX, arrangemNumY, 3);
 
 	DDX_Control(pDX, IDC_EDIT1, arrangemSpaceCtrl);
 	DDX_Text(pDX, IDC_EDIT1, arrangemSpace);
@@ -104,7 +104,6 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON1, &CPhotoMergeDlg::OnOpenSaveDefFolder)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON2, &CPhotoMergeDlg::OnOpenSaveDifFolder)
 	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
-	//	ON_WM_DESTROY()
 	ON_EN_CHANGE(IDC_SAVE_EDIT1, &CPhotoMergeDlg::OnEnChangeSaveEdit1)
 END_MESSAGE_MAP()
 
@@ -262,12 +261,12 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 
 	CString strFilesCnt;
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 1000; i++)
 		dropFilesPath[i] = "";
 
 	// 드래그 드롭된 파일의 갯수
 	dropFilesNum = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
-	if (dropFilesNum == 1)
+	if (dropFilesNum < 2)
 	{
 		AfxMessageBox(_T("2개 이상의 사진이 필요합니다."));
 		return;
@@ -412,6 +411,13 @@ void CPhotoMergeDlg::OnSelectSaveDifFolder()
 
 void CPhotoMergeDlg::OnMergePhotos()
 {
+	if (dropFilesNum < 2)
+	{
+		AfxMessageBox(_T("2개 이상의 사진이 필요합니다."));
+		return;
+	}
+
+
 	if (saveDefFolderRadioCtrl.GetCheck())
 	{
 		saveFolder = saveDefFolder + saveFileName + _T(".jpg");
@@ -544,6 +550,7 @@ void CPhotoMergeDlg::OnMergePhotos()
 	}
 
 	GdiplusShutdown(gdiplustToken);
+	AfxMessageBox(_T("합성한 사진이 저장되었습니다.\n경로: ") + saveFolder);
 }
 
 
