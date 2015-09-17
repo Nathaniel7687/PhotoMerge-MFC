@@ -92,4 +92,5 @@ public:
 	afx_msg void OnMergePhotos();
 
 	int GetEncoderClsid(const WCHAR *format, CLSID *pClsid);
+	afx_msg void OnBnClickedAbout();
 };

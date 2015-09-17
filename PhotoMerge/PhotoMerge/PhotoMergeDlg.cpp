@@ -2,6 +2,7 @@
 #include "PhotoMerge.h"
 #include "PhotoMergeDlg.h"
 #include "afxdialogex.h"
+#include "afxwin.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,6 +26,8 @@ protected:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 
@@ -39,7 +42,17 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	ON_NOTIFY(NM_CLICK, IDC_SYSLINK1, &CAboutDlg::OnNMClickSyslink1)
 END_MESSAGE_MAP()
+
+
+void CAboutDlg::OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
+
+	ShellExecute(NULL, NULL, _T("http://nancom.tistory.com/"), NULL, NULL, SW_SHOWNORMAL);
+}
 
 
 // CPhotoMergeDlg 대화 상자
@@ -105,6 +118,7 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SAVE_OPEN_BUTTON2, &CPhotoMergeDlg::OnOpenSaveDifFolder)
 	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
 	ON_EN_CHANGE(IDC_SAVE_EDIT1, &CPhotoMergeDlg::OnEnChangeSaveEdit1)
+	ON_BN_CLICKED(IDABOUT, &CPhotoMergeDlg::OnBnClickedAbout)
 END_MESSAGE_MAP()
 
 
@@ -112,8 +126,6 @@ END_MESSAGE_MAP()
 BOOL CPhotoMergeDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
-	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
 
 	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
@@ -136,7 +148,7 @@ BOOL CPhotoMergeDlg::OnInitDialog()
 	// 이 대화 상자의 아이콘을 설정합니다.  응용 프로그램의 주 창이 대화 상자가 아닐 경우에는
 	//  프레임워크가 이 작업을 자동으로 수행합니다.
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
-	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
+	//SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	// 크기 조절에 콤보 박스 셋팅
@@ -195,27 +207,27 @@ void CPhotoMergeDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // 문서/뷰 모델을 사용하는 MFC 응용 프로그램의 경우에는 프레임워크에서 이 작업을 자동으로 수행합니다.
 void CPhotoMergeDlg::OnPaint()
 {
-	if (IsIconic())
-	{
-		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
+	//if (IsIconic())
+	//{
+	//	CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
 
-		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
+	//	SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
-		CRect rect;
-		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
+	//	// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
+	//	int cxIcon = GetSystemMetrics(SM_CXICON);
+	//	int cyIcon = GetSystemMetrics(SM_CYICON);
+	//	CRect rect;
+	//	GetClientRect(&rect);
+	//	int x = (rect.Width() - cxIcon + 1) / 2;
+	//	int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// 아이콘을 그립니다.
-		dc.DrawIcon(x, y, m_hIcon);
-	}
-	else
-	{
-		CDialogEx::OnPaint();
-	}
+	//	// 아이콘을 그립니다.
+	//	dc.DrawIcon(x, y, m_hIcon);
+	//}
+	//else
+	//{
+	//	CDialogEx::OnPaint();
+	//}
 }
 
 
@@ -266,9 +278,9 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 
 	// 드래그 드롭된 파일의 갯수
 	dropFilesNum = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
-	if (dropFilesNum < 2)
+	if (dropFilesNum < 1)
 	{
-		AfxMessageBox(_T("2개 이상의 사진이 필요합니다."));
+		AfxMessageBox(_T("1개 이상의 사진이 필요합니다."));
 		return;
 	}
 
@@ -303,10 +315,15 @@ void CPhotoMergeDlg::OnDropFiles(HDROP hDropInfo)
 		// 세로 사진 배열 갯수를 1/2로 맞춤
 		CString numY;
 		numY.Format(_T("%d"), dropFilesNum / 2 + 1);
+	
+		if (dropFilesNum != 1)
+			arrangemNumCtrlX.SetWindowTextW(_T("2"));
+		else
+			arrangemNumCtrlX.SetWindowTextW(_T("1"));
 
-		arrangemNumCtrlX.SetWindowTextW(_T("2"));
 		arrangemNumCtrlY.SetWindowTextW(numY);
 	}
+	
 
 	// 저장폴더 셋팅
 	int i = dropFilesPath[0].ReverseFind('\\');			// 파일 이름을 지우기 위해서 오른쪽 마지막 '/'를 찾는다.
@@ -411,9 +428,9 @@ void CPhotoMergeDlg::OnSelectSaveDifFolder()
 
 void CPhotoMergeDlg::OnMergePhotos()
 {
-	if (dropFilesNum < 2)
+	if (dropFilesNum < 1)
 	{
-		AfxMessageBox(_T("2개 이상의 사진이 필요합니다."));
+		AfxMessageBox(_T("1개 이상의 사진이 필요합니다."));
 		return;
 	}
 
@@ -579,4 +596,15 @@ int CPhotoMergeDlg::GetEncoderClsid(const WCHAR *format, CLSID *pClsid)
 	}
 	free(pImageCodecInfo);
 	return -1;
+}
+
+
+void CPhotoMergeDlg::OnBnClickedAbout()
+{
+	static CAboutDlg Dlg;
+
+	if (Dlg.GetSafeHwnd() == NULL)
+		Dlg.Create(IDD_ABOUTBOX);
+
+	Dlg.ShowWindow(SW_SHOW);
 }
