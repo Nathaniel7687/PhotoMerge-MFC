@@ -1,12 +1,8 @@
 #pragma once
 #include "afxwin.h"
 #include "afxcmn.h"
-
-// CImage를 사용하기 위한 헤더
-#include <atlimage.h>
-
-// GDI+를 이용하기 위한 라이브러리
-#include <gdiplus.h>
+#include <atlimage.h>	// CImage를 사용하기 위한 헤더
+#include <gdiplus.h>	// GDI+를 이용하기 위한 라이브러리
 using namespace Gdiplus;
 
 class CPhotoMergeDlg : public CDialogEx
