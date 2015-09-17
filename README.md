@@ -6,13 +6,17 @@
 
 ### How to Use
 1. 프로그램을 실행한다.
-  ![Readme01](http://cfile22.uf.tistory.com/image/2164A53955FAF7DB0398E4)
+
+![Readme01](http://cfile22.uf.tistory.com/image/2164A53955FAF7DB0398E4)
 2. 합성할 사진들을 프로그램으로 드래그 한다.
-  ![Readme02](http://cfile27.uf.tistory.com/image/2762FC3955FAF7DD048F99)
+
+![Readme02](http://cfile27.uf.tistory.com/image/2762FC3955FAF7DD048F99)
 3. 마음대로 셋팅을 수정 후 합성 버튼을 누른다.
-  ![Readme03](http://cfile4.uf.tistory.com/image/2563083955FAF7DF04846F)
+
+![Readme03](http://cfile4.uf.tistory.com/image/2563083955FAF7DF04846F)
 4. 결과물을 확인한다.
-  ![Readme04](http://cfile4.uf.tistory.com/image/2564B33955FAF7E1034BF4)
+
+![Readme04](http://cfile4.uf.tistory.com/image/2564B33955FAF7E1034BF4)
 
 
 #### Download
