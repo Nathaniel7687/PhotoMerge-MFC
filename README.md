@@ -29,3 +29,7 @@ https://github.com/Nathaniel7687/PhotoMerge-MFC
 Changelog
 -------------
 https://github.com/Nathaniel7687/PhotoMerge-MFC/blob/master/PhotoMerge%20changelog
+
+License
+-------------
+Copyright © 2015 InSeob Kim All rights reserved.
