@@ -103,6 +103,7 @@ void CPhotoMergeDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SAVE_RADIO1, saveDefFolderRadioCtrl);
 	DDX_Control(pDX, IDC_SAVE_RADIO2, saveDifFolderRadioCtrl);
 	DDX_Control(pDX, IDC_SAVE_EDIT2, saveDifFolderCtrl);
+	DDX_Control(pDX, IDC_CHECK2, saveFileOption1);
 }
 
 BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
@@ -119,6 +120,7 @@ BEGIN_MESSAGE_MAP(CPhotoMergeDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CPhotoMergeDlg::OnMergePhotos)
 	ON_EN_CHANGE(IDC_SAVE_EDIT1, &CPhotoMergeDlg::OnEnChangeSaveEdit1)
 	ON_BN_CLICKED(IDABOUT, &CPhotoMergeDlg::OnBnClickedAbout)
+	ON_BN_CLICKED(IDC_SAVE_CHECK1, &CPhotoMergeDlg::OnBnClickSaveFileOption1)
 END_MESSAGE_MAP()
 
 
@@ -675,6 +677,16 @@ void CPhotoMergeDlg::OnMergePhotos()
 	}
 
 	GdiplusShutdown(gdiplustToken);
+
+	if (saveFileOption1.GetCheck())
+	{
+		for (int i = 0; i < dropFilesNum; i++)
+		{
+			DeleteFile(dropFilesPath[i]);
+			//AfxMessageBox(dropFilesPath[i]);
+		}
+	}
+
 	AfxMessageBox(_T("합성한 사진이 저장되었습니다.\n경로: \"") + saveFolder + _T("\""));
 }
 
@@ -717,4 +729,18 @@ void CPhotoMergeDlg::OnBnClickedAbout()
 		Dlg.Create(IDD_ABOUTBOX);
 
 	Dlg.ShowWindow(SW_SHOW);
+}
+
+
+void CPhotoMergeDlg::OnBnClickSaveFileOption1()
+{
+	// TODO: Add your control notification handler code here
+	if (saveFileOption1.GetCheck())
+	{
+		int nResult;
+		nResult = AfxMessageBox(_T("합성에 사용된 사진들이 제거됩니다.\n해당 기능을 사용하시겠습니까?"), MB_YESNO | MB_ICONWARNING);
+
+		if (nResult == IDNO)
+			saveFileOption1.SetCheck(FALSE);
+	}
 }

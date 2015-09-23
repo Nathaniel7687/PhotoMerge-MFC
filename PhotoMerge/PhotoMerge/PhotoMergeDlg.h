@@ -81,6 +81,7 @@ public:
 
 	// 이미지 저장 관련
 	int GetEncoderClsid(const WCHAR *format, CLSID *pClsid);
+	CButton saveFileOption1;
 	afx_msg void OnBnClickedAbout();
 
 	// 항상 위 관련
@@ -91,4 +92,5 @@ public:
 	LONG		transExtendedStyle;
 	CSliderCtrl	transSliderCtrl;
 	afx_msg void OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickSaveFileOption1();
 };
