@@ -93,4 +93,7 @@ public:
 	CSliderCtrl	transSliderCtrl;
 	afx_msg void OnNMCustomdrawTransSlider(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickSaveFileOption1();
+
+	// 윈도우 타입 알아내는 함수
+	int GetWindowsType();
 };

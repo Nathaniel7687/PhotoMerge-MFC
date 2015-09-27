@@ -3,6 +3,7 @@
 #include "PhotoMergeDlg.h"
 #include "afxdialogex.h"
 #include "afxwin.h"
+//#pragma warning(disable : 4996)
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -678,12 +679,58 @@ void CPhotoMergeDlg::OnMergePhotos()
 
 	GdiplusShutdown(gdiplustToken);
 
+
+	// 사진 파일 제거 옵션이 활성화 되어 있을 경우 사진 파일 제거
 	if (saveFileOption1.GetCheck())
 	{
-		for (int i = 0; i < dropFilesNum; i++)
+		if (GetWindowsType() <= 7)	// Windows XP 이하
 		{
-			DeleteFile(dropFilesPath[i]);
-			//AfxMessageBox(dropFilesPath[i]);
+			// SHFILEOPSTRUCT에서 마지막 파일 구분이 NULL 두개인데 아래 for문에서
+			// NULL을 한개씩만 더해주므로 1부터 시작
+			int totallyPathLen = 1;
+			for (int i = 0; i < dropFilesNum; i++)
+			{
+				// 파일 경로 길이 + NULL값 공간
+				totallyPathLen += dropFilesPath[i].GetLength() + 1;
+			}
+
+			int p = 0;
+			TCHAR *pFrom = new TCHAR[totallyPathLen];	// FileOp.pFrom에 사용할 변수
+			for (int i = 0; i < dropFilesNum; i++)
+			{
+				TCHAR *tempDropFilesPath = (TCHAR*)(LPCTSTR)dropFilesPath[i];
+
+				for (int len = 0; len < dropFilesPath[i].GetLength(); len++)
+				{
+					pFrom[p++] = tempDropFilesPath[len];
+				}
+				pFrom[p++] = '\0';
+			}
+			pFrom[p] = '\0';
+
+			// 사진 파일을 휴지통으로 보내려 할때 사용하는 옵션
+			SHFILEOPSTRUCT FileOp;
+			FileOp.hwnd = NULL;
+			FileOp.wFunc = FO_DELETE;
+			FileOp.pFrom = pFrom;
+			FileOp.pTo = NULL;
+			FileOp.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI; // 확인메시지가 안뜨도록 설정 
+			FileOp.fAnyOperationsAborted = false;
+			FileOp.hNameMappings = NULL;
+			FileOp.lpszProgressTitle = NULL;
+			
+			// SHFileOperation() return codes
+			// https://msdn.microsoft.com/ko-kr/library/windows/desktop/bb762164%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+			if (int i = SHFileOperation(&FileOp) != 0)	// 0 이외에는 정상적인 성공이 아님
+			{
+				AfxMessageBox(_T("파일을 지우지 못했습니다."));
+			}
+
+			delete[] pFrom;
+		}	
+		else	// Vista 이상
+		{
+
 		}
 	}
 
@@ -743,4 +790,136 @@ void CPhotoMergeDlg::OnBnClickSaveFileOption1()
 		if (nResult == IDNO)
 			saveFileOption1.SetCheck(FALSE);
 	}
+}
+
+int CPhotoMergeDlg::GetWindowsType(void)
+{
+	/*
+	return value :
+	-1 : 버전얻기 실패
+	1 : Windows 95,
+	2 : Windows 98,
+	3 : Windows ME,
+	4 : Windows NT,
+	5 : Windows 2000,
+	6 : Windows XP,
+	7 : Windows XP Professional x64 Edition
+		Windows XP Home Server
+		Windows Server 2003
+		Windows Server 2003 R2
+	8 : Windows Vista
+		Windows Server 2008
+	9 : Windows 7
+		winodws 2008 R2
+	10: Windows 8
+		Windows Server 2012
+	11: Windows 8.1
+		Windows Server 2012 R2
+	12: Windows 10
+		Windows Server 2016 Technical Preview
+
+	버전 정보 확인 사이트(OSVERSIONINFOEX structure)
+	https://msdn.microsoft.com/ko-kr/library/windows/desktop/ms724833(v=vs.85).aspx
+	*/
+
+	int nVersion = -1;
+	OSVERSIONINFOEX osvi = { 0, };
+	BOOL version_ex_flag = 0;
+
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+	if (!(version_ex_flag = GetVersionEx((OSVERSIONINFO *)&osvi)))
+	{
+		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		if (!GetVersionEx((OSVERSIONINFO *)&osvi))
+			return -1;
+	}
+
+	switch (osvi.dwPlatformId)
+	{
+	case VER_PLATFORM_WIN32_WINDOWS:    // 윈도우즈 9x 기반의 운영체제인 경우
+	{
+		if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
+		{
+			// Windows 95
+			nVersion = 1;
+		}
+		else if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
+		{
+			// Windows 98
+			nVersion = 2;
+		}
+		else if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
+		{
+			// Windows ME
+			nVersion = 3;
+		}
+	}
+	break;
+	case VER_PLATFORM_WIN32_NT: // NT 기술 기반의 운영체제인 경우
+	{
+		if (osvi.dwMajorVersion <= 4)
+		{
+			// Windows NT
+			nVersion = 4;
+		}
+		else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
+		{
+			// Windows 2000
+			nVersion = 5;
+		}
+		else if (version_ex_flag)
+		{
+			if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
+			{
+				// Windows XP
+				nVersion = 6;
+			}
+			else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2)
+			{
+				// Windows XP Professional x64 Edition
+				// Windows XP Home Server
+				// Windows Server 2003
+				// Windows Server 2003 R2
+				nVersion = 7;
+			}
+			else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
+			{
+				// Windows Vista
+				// Windows Server 2008
+				nVersion = 8;
+			}
+			else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
+			{
+				// Windows 7
+				// winodws 2008 R2
+				nVersion = 9;
+			}
+			else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
+			{
+				// Windows 8
+				// Windows Server 2012
+				nVersion = 10;
+			}
+			else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+			{
+				// Windows 8.1
+				// Windows Server 2012 R2
+				nVersion = 11;
+			}
+			else if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0)
+			{
+				// Windows 10
+				// Windows Server 2016 Technical Preview
+				nVersion = 12;
+			}
+		}
+	}
+	break;
+	}
+	
+	// 자신의 운영체제 버전 확인
+	//checkIntToCString(_T("osvi: "), osvi.dwMajorVersion, osvi.dwMinorVersion);
+
+	return nVersion;
 }

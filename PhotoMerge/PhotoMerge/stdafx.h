@@ -31,7 +31,7 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <afxcontrolbars.h>     // MFC의 리본 및 컨트롤 막대 지원
-
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console") // Command Prompt 창 실행
 
 #ifdef _UNICODE
 #if defined _M_IX86
